@@ -1,105 +1,106 @@
-import React from 'react'
-// Magic UI — Border Beam
-import { BorderBeam } from './magicui/border-beam'
-// Magic UI — Number Ticker
+import { Reveal, SectionHeading } from './motion/primitives'
 import { NumberTicker } from './magicui/number-ticker'
-// Aceternity — 3D Card Effect
-import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
+import { projects } from '@/lib/data'
 
-const projects = [
-  {
-    title: 'MarketForge — Paper Trading Simulator',
-    tech: 'React, Node.js, Express, MongoDB, Zustand, Yahoo Finance API, Tailwind CSS',
-    year: 'May 2026 – Jun 2026',
-    summary: 'Full-stack paper trading platform tracking 30 stocks with real-time Yahoo Finance market data. JWT cookie authentication with persistent sessions, portfolio tracking, and real-time P&L. Dark premium dashboard using Tailwind CSS, Zustand, and react-hook-form.',
-    flagship: true,
-  },
-  {
-    title: 'AI Health Prediction Application',
-    tech: 'Python, FastAPI, XGBoost, Gradient Boosting, OCR',
-    year: 'Oct 2025 – Dec 2025',
-    summary: 'Disease classification model covering 150+ diseases using XGBoost and Gradient Boosting, served via a FastAPI backend. OCR pipeline for extracting medicines from prescription images, plus a medication reminder workflow.',
-  },
-  {
-    title: 'Kanvora — Collaborative Project Board',
-    tech: 'React, Node.js, Express, MongoDB, Socket.IO, react-beautiful-dnd',
-    year: 'Apr 2026 – Jun 2026',
-    summary: 'Trello-style project management app with real-time collaboration using Socket.IO. Drag-and-drop cards and columns with concurrent-edit race-condition handling. USER / AUTHOR / ADMIN role-based access control.',
-  },
-]
-
-function FlagshipCard({ item }) {
+function TechList({ tech }) {
   return (
-    <CardContainer containerClassName='py-0 col-span-1 md:col-span-2' className='w-full'>
-      <CardBody className='relative h-auto w-full rounded-[var(--radius-lg)] border border-white/12 bg-white/[0.03] p-6 md:p-8 [transform-style:preserve-3d]'>
-        <BorderBeam size={80} duration={10} colorFrom='#22d3ee' colorTo='#8b5cf6' />
-        <CardItem translateZ='40' className='w-full'>
-          <p className='text-xs font-bold uppercase tracking-[0.2em] text-cyan-300'>Project</p>
-          <h3 className='mt-3 text-2xl font-bold tracking-tight text-white md:text-4xl'>{item.title}</h3>
-          <p className='mt-2 text-sm text-white/60'>
-            {item.tech} - {item.year}
-          </p>
-        </CardItem>
-        <CardItem translateZ='20' className='mt-6 w-full'>
-          <p className='max-w-3xl text-base leading-relaxed text-white/75 md:text-lg'>{item.summary}</p>
-        </CardItem>
-        <CardItem translateZ='30' className='mt-8'>
-          <div className='inline-flex items-baseline gap-2 rounded-[var(--radius-sm)] border border-white/12 bg-black/30 px-4 py-3'>
-            <span className='text-3xl font-bold text-white'>
-              <NumberTicker value={30} className='text-white' />
-            </span>
-            <span className='text-xs font-semibold uppercase tracking-[0.18em] text-white/50'>stocks tracked</span>
+    <ul className='mt-4 flex flex-wrap gap-2'>
+      {tech.map((t) => (
+        <li
+          key={t}
+          className='text-[11px] font-medium text-[var(--color-ink-muted)] after:content-["·"] after:ml-2 last:after:content-[""]'
+        >
+          {t}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function FlagshipProject({ item }) {
+  return (
+    <Reveal>
+      <article className='group relative'>
+        <div className='editorial-rule mb-8' />
+
+        <div className='grid gap-8 lg:grid-cols-12'>
+          <div className='lg:col-span-8'>
+            <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]'>
+              Featured Project
+            </p>
+            <h3 className='mt-3 text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold tracking-tight text-white leading-[1.1]'>
+              {item.title}
+            </h3>
+            <p className='mt-2 text-sm text-[var(--color-ink-muted)]'>{item.year}</p>
+
+            <p className='mt-5 max-w-2xl text-[0.9rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+              {item.summary}
+            </p>
+
+            <TechList tech={item.tech} />
           </div>
-        </CardItem>
-      </CardBody>
-    </CardContainer>
+
+          {item.metric && (
+            <div className='flex items-start lg:col-span-4'>
+              <div className='flex flex-col'>
+                <span className='text-4xl font-bold tabular-nums text-white md:text-5xl'>
+                  <NumberTicker value={item.metric.value} className='text-white' />
+                </span>
+                <span className='mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-ink-muted)]'>
+                  {item.metric.label}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </article>
+    </Reveal>
   )
 }
 
-function SiblingCard({ item }) {
+function ProjectCard({ item }) {
   return (
-    <CardContainer containerClassName='py-0' className='w-full'>
-      <CardBody className='relative h-auto w-full rounded-[var(--radius-lg)] border border-white/12 bg-white/[0.03] p-6 [transform-style:preserve-3d]'>
-        <CardItem translateZ='40' className='w-full'>
-          <p className='text-xs font-bold uppercase tracking-[0.2em] text-violet-300'>Project</p>
-          <h3 className='mt-3 text-xl font-bold tracking-tight text-white md:text-2xl'>{item.title}</h3>
-          <p className='mt-2 text-sm text-white/60'>
-            {item.tech} - {item.year}
-          </p>
-        </CardItem>
-        <CardItem translateZ='20' className='mt-6'>
-          <p className='text-sm leading-relaxed text-white/75 md:text-base'>{item.summary}</p>
-        </CardItem>
-      </CardBody>
-    </CardContainer>
+    <Reveal>
+      <article className='group'>
+        <div className='editorial-rule mb-6' />
+
+        <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-muted)]'>
+          Project
+        </p>
+        <h3 className='mt-2 text-lg font-bold tracking-tight text-white md:text-xl'>
+          {item.title}
+        </h3>
+        <p className='mt-1 text-sm text-[var(--color-ink-muted)]'>{item.year}</p>
+
+        <p className='mt-3 max-w-xl text-[0.85rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+          {item.summary}
+        </p>
+
+        <TechList tech={item.tech} />
+      </article>
+    </Reveal>
   )
 }
 
-function ProjectsSection() {
-  const [flagship, ...siblings] = projects
+export default function ProjectsSection() {
+  const flagship = projects.find((p) => p.flagship)
+  const siblings = projects.filter((p) => !p.flagship)
 
   return (
-    <section id='projects' className='relative scroll-mt-24 px-6 py-16 md:py-24'>
-      <div className='mx-auto max-w-6xl'>
-        <p className='text-xs font-bold uppercase tracking-[0.2em] text-white/50'>03 - Projects</p>
-        <div className='my-8 h-px w-full bg-white/20' />
-        <h2 className='max-w-5xl text-[clamp(2.75rem,8vw,6rem)] font-black uppercase leading-[0.88] tracking-tight text-white'>
-          Ideas
-          <br />
-          Into
-          <br />
-          Impact.
-        </h2>
+    <section id='projects' className='relative scroll-mt-24 px-6 py-16 md:py-28'>
+      <div className='mx-auto max-w-[1400px]'>
+        <SectionHeading index='03' kicker='Selected Work' title={<>Ideas into impact.</>} />
 
-        <div className='mt-12 grid grid-cols-1 gap-5 md:grid-cols-2'>
-          <FlagshipCard item={flagship} />
+        {flagship && <FlagshipProject item={flagship} />}
+
+        <div className='mt-16 grid grid-cols-1 gap-12 md:grid-cols-2'>
           {siblings.map((item) => (
-            <SiblingCard key={item.title} item={item} />
+            <ProjectCard key={item.title} item={item} />
           ))}
         </div>
       </div>
+
+      <div className='editorial-rule mx-auto mt-20 max-w-[1400px]' />
     </section>
   )
 }
-
-export default ProjectsSection

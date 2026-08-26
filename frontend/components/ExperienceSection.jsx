@@ -1,60 +1,46 @@
-import React from 'react'
-// Aceternity — Timeline
-import { Timeline } from './aceternity/timeline'
-import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
+import { Reveal, SectionHeading } from './motion/primitives'
+import { experience } from '@/lib/data'
 
-const internships = [
-  {
-    title: 'MERN Stack Intern',
-    company: 'Suntek IT Solutions',
-    year: 'Feb 2026 – Apr 2026',
-    summary: 'Completed a 10-week structured training program in JavaScript, Node.js, Express, and full-stack MERN development alongside DSA. Shipped a full-stack blog application with end-to-end deployment on Vercel, Render, and MongoDB Atlas. Delivered two production-grade MERN applications independently.',
-  },
-  {
-    title: 'Virtual Intern',
-    company: 'Google Cloud via EduSkills / AICTE',
-    year: 'May 2026 – Jun 2026',
-    summary: 'Completed Google\'s Data Analytics learning path covering BigQuery, Looker Studio, and cloud-based data pipeline fundamentals. Queried large datasets using SQL in BigQuery and built analytical dashboards in Looker Studio. Authored a 30-page internship report documenting BigQuery workflows, Looker Studio dashboards, and data analytics outcomes.',
-  },
-]
-
-function ExperienceSection() {
-  const data = internships.map((item) => ({
-    title: item.year,
-    content: (
-      <CardContainer containerClassName='py-0' className='w-full'>
-        <CardBody className='relative h-auto w-full panel-surface p-6 md:p-8 [transform-style:preserve-3d]'>
-          <CardItem translateZ='40' className='w-full'>
-            <p className='text-xs font-bold uppercase tracking-[0.2em] text-cyan-300'>Internship</p>
-            <h3 className='mt-3 text-2xl font-bold tracking-tight text-white md:text-4xl'>{item.title}</h3>
-            <p className='mt-2 text-sm text-white/60'>
-              {item.company} - {item.year}
-            </p>
-          </CardItem>
-          <CardItem translateZ='20' className='mt-6 w-full'>
-            <p className='max-w-2xl text-base leading-relaxed text-white/75 md:text-lg'>{item.summary}</p>
-          </CardItem>
-        </CardBody>
-      </CardContainer>
-    ),
-  }))
-
+export default function ExperienceSection() {
   return (
-    <section id='experience' className='relative scroll-mt-24 py-16 md:py-24'>
-      <div className='mx-auto max-w-6xl px-6'>
-        <p className='text-xs font-bold uppercase tracking-[0.2em] text-white/50'>02 - Experience</p>
-        <div className='my-8 h-px w-full bg-white/20' />
-        <h2 className='max-w-5xl text-[clamp(2.75rem,8vw,6rem)] font-black uppercase leading-[0.88] tracking-tight text-white'>
-          Learn
-          <br />
-          By
-          <br />
-          Doing.
-        </h2>
+    <section id='experience' className='relative scroll-mt-24 py-16 md:py-28'>
+      <div className='mx-auto max-w-[1400px] px-6'>
+        <SectionHeading index='02' kicker='Experience' title={<>Learn by doing.</>} />
+
+        <div className='relative'>
+          {/* Vertical editorial line */}
+          <div className='absolute left-[7px] top-2 bottom-2 w-px bg-white/[0.06]' />
+
+          <div className='flex flex-col gap-12'>
+            {experience.map((item, i) => (
+              <Reveal key={item.title} delay={i * 0.08}>
+                <div className='relative pl-8'>
+                  {/* Timeline dot */}
+                  <div className='absolute left-0 top-2 h-[15px] w-[15px] rounded-full border-2 border-[var(--color-accent)]/40 bg-[var(--color-void)]' />
+
+                  <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-muted)]'>
+                    {item.year}
+                  </p>
+
+                  <h3 className='mt-2 text-xl font-bold tracking-tight text-white md:text-2xl'>
+                    {item.title}
+                  </h3>
+
+                  <p className='mt-1 text-sm text-[var(--color-ink-muted)]'>
+                    {item.company}
+                  </p>
+
+                  <p className='mt-4 max-w-2xl text-[0.9rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+                    {item.summary}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </div>
-      <Timeline data={data} />
+
+      <div className='editorial-rule mx-auto mt-20 max-w-[1400px]' />
     </section>
   )
 }
-
-export default ExperienceSection

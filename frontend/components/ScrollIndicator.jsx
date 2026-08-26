@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'motion/react'
 
 function ScrollIndicator() {
@@ -8,21 +7,21 @@ function ScrollIndicator() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.6 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className='relative w-full bg-black text-white flex flex-col items-center justify-center select-none mb-24 md:mb-0'
+      className='relative w-full flex flex-col items-center justify-center select-none'
     >
-      <p className='text-xs md:text-sm tracking-[0.4em] font-medium text-white/80'>
+      <p className='text-[10px] tracking-[0.35em] font-medium text-[var(--color-ink-muted)]'>
         SCROLL
       </p>
       <motion.div
         aria-hidden
-        className='mt-4 h-6 w-px bg-white/30 overflow-hidden'
+        className='mt-3 h-5 w-px bg-white/15 overflow-hidden'
       >
         <motion.span
-          className='block h-full w-full bg-white'
+          className='block h-full w-full bg-white/40'
           initial={{ y: '-100%' }}
           animate={{ y: ['-100%', '100%'] }}
           transition={{
-            duration: 1.6,
+            duration: 1.8,
             ease: 'easeInOut',
             repeat: Infinity,
             repeatType: 'loop',

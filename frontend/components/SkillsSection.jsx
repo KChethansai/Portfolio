@@ -1,174 +1,124 @@
-import React from 'react'
-import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
+import { Reveal, SectionHeading } from './motion/primitives'
+import { skillGroups, education, certifications } from '@/lib/data'
 
-const groups = [
-  {
-    title: 'Frontend',
-    items: ['React', 'Tailwind CSS', 'Zustand', 'react-beautiful-dnd'],
-  },
-  {
-    title: 'Backend',
-    items: ['Node.js', 'Express', 'FastAPI', 'Socket.IO'],
-  },
-  {
-    title: 'Data',
-    items: ['MongoDB', 'MySQL', 'BigQuery', 'Supabase', 'SQL', 'Python', 'XGBoost', 'Gradient Boosting', 'OCR', 'Looker Studio'],
-  },
-  {
-    title: 'Tools',
-    items: ['Git', 'GitHub', 'GitHub Actions', 'GitLab', 'Postman', 'Excel', 'Godot', 'Linux', 'JavaScript', 'C', 'C++', 'Java'],
-  },
-]
-
-function SkillsSection() {
+function SkillGroup({ group, index }) {
   return (
-    <section id='skills' className='relative scroll-mt-24 px-6 py-16 md:py-24'>
-      <div className='mx-auto max-w-6xl'>
-        <p className='text-xs font-bold uppercase tracking-[0.2em] text-white/50'>04 - Skills</p>
-        <div className='my-8 h-px w-full bg-white/20' />
-        <div className='flex flex-wrap items-end justify-between gap-4'>
-          <h2 className='text-3xl font-semibold tracking-tight text-white md:text-5xl'>
-            Building at the intersection of data, design, and code.
-          </h2>
-          <p className='text-sm text-white/45'>
-            See the full stack above.
-          </p>
-        </div>
-
-        <div className='mt-8 grid grid-cols-1 gap-4 md:grid-cols-2'>
-          <CardContainer containerClassName='py-0' className='w-full'>
-            <CardBody className='relative h-auto w-full panel-surface p-6 [transform-style:preserve-3d]'>
-              <CardItem translateZ='30' className='w-full'>
-                <h3 className='text-sm font-bold uppercase tracking-[0.2em] text-cyan-300/90'>AI &amp; Data</h3>
-                <p className='mt-2 text-sm text-white/60'>Building Intelligent Systems</p>
-                <p className='mt-4 text-sm leading-relaxed text-white/80 md:text-base'>
-                  Building ML-powered tools including a disease prediction model covering 150+ diseases with XGBoost and Gradient Boosting, plus cloud analytics with BigQuery.
-                </p>
-              </CardItem>
-            </CardBody>
-          </CardContainer>
-
-          <CardContainer containerClassName='py-0' className='w-full'>
-            <CardBody className='relative h-auto w-full panel-surface p-6 [transform-style:preserve-3d]'>
-              <CardItem translateZ='30' className='w-full'>
-                <h3 className='text-sm font-bold uppercase tracking-[0.2em] text-cyan-300/90'>Full Stack</h3>
-                <p className='mt-2 text-sm text-white/60'>Scalable Web Architecture</p>
-                <p className='mt-4 text-sm leading-relaxed text-white/80 md:text-base'>
-                  Building full-stack MERN applications — including real-time collaborative systems and a paper trading platform with live market data.
-                </p>
-              </CardItem>
-            </CardBody>
-          </CardContainer>
-        </div>
-
-        <div className='mt-10 grid grid-cols-1 gap-4 md:grid-cols-2'>
-          {groups.map((group) => (
-            <CardContainer key={group.title} containerClassName='py-0' className='w-full'>
-              <CardBody className='relative h-auto w-full panel-surface p-6 md:p-7 [transform-style:preserve-3d]'>
-                <CardItem translateZ='30' className='w-full'>
-                  <h3 className='text-sm font-bold uppercase tracking-[0.2em] text-cyan-300/90'>
-                    {group.title}
-                  </h3>
-                  <ul className='mt-4 flex flex-wrap gap-2'>
-                    {group.items.map((skill) => (
-                      <li key={skill}>
-                        <span className='inline-block rounded-full border border-white/12 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/85 md:text-sm'>
-                          {skill}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardItem>
-              </CardBody>
-            </CardContainer>
+    <Reveal delay={index * 0.04}>
+      <div>
+        <h3 className='flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-ink-muted)]'>
+          <span
+            className='inline-block h-1.5 w-1.5 rounded-full'
+            style={{ background: group.color }}
+            aria-hidden
+          />
+          {group.title}
+        </h3>
+        <ul className='mt-3 flex flex-wrap gap-x-4 gap-y-1.5'>
+          {group.items.map((skill) => (
+            <li key={skill} className='text-[13px] text-[var(--color-ink-secondary)]'>
+              {skill}
+            </li>
           ))}
-        </div>
-
-        {/* Education & certifications — preserved resume facts */}
-        <div id='education' className='mt-20'>
-          <p className='text-xs font-bold uppercase tracking-[0.2em] text-white/50'>
-            Education &amp; Certifications
-          </p>
-          <h3 className='mt-3 text-3xl font-semibold tracking-tight text-white md:text-5xl'>
-            Degrees &amp; Credentials
-          </h3>
-
-          <div className='mt-10 flex flex-col gap-4'>
-            <CardContainer containerClassName='py-0' className='w-full'>
-              <CardBody className='relative h-auto w-full panel-surface p-6 [transform-style:preserve-3d]'>
-                <CardItem translateZ='30' className='w-full'>
-                  <h4 className='text-lg font-bold text-white md:text-xl'>B.Tech CSE (Data Science)</h4>
-                  <p className='mt-1 text-sm text-white/60'>Anurag University</p>
-                  <div className='mt-3 flex flex-wrap items-center gap-2'>
-                    <span className='text-xs uppercase tracking-[0.2em] text-white/50'>2024 - 2028</span>
-                    <span className='rounded-full border border-orange-700/40 bg-orange-700/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-orange-400'>
-                      Ongoing
-                    </span>
-                  </div>
-                  <p className='mt-3 text-sm text-white/80'>CGPA 8.87</p>
-                </CardItem>
-              </CardBody>
-            </CardContainer>
-
-            <CardContainer containerClassName='py-0' className='w-full'>
-              <CardBody className='relative h-auto w-full panel-surface p-6 [transform-style:preserve-3d]'>
-                <CardItem translateZ='30' className='w-full'>
-                  <h4 className='text-lg font-bold text-white md:text-xl'>Intermediate</h4>
-                  <p className='mt-1 text-sm text-white/60'>Sri Chaitanya Jr Kalasala</p>
-                  <div className='mt-3 flex flex-wrap items-center gap-2'>
-                    <span className='text-xs uppercase tracking-[0.2em] text-white/50'>2024</span>
-                    <span className='rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400'>
-                      Completed
-                    </span>
-                  </div>
-                  <p className='mt-3 text-sm text-white/80'>93.3%</p>
-                </CardItem>
-              </CardBody>
-            </CardContainer>
-
-            <CardContainer containerClassName='py-0' className='w-full'>
-              <CardBody className='relative h-auto w-full panel-surface p-6 [transform-style:preserve-3d]'>
-                <CardItem translateZ='30' className='w-full'>
-                  <h4 className='text-lg font-bold text-white md:text-xl'>Secondary School</h4>
-                  <p className='mt-1 text-sm text-white/60'>Sri Chaitanya Techno School</p>
-                  <div className='mt-3 flex flex-wrap items-center gap-2'>
-                    <span className='text-xs uppercase tracking-[0.2em] text-white/50'>2022</span>
-                    <span className='rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400'>
-                      Completed
-                    </span>
-                  </div>
-                  <p className='mt-3 text-sm text-white/80'>9.7</p>
-                </CardItem>
-              </CardBody>
-            </CardContainer>
-          </div>
-
-          <div className='mt-8 grid grid-cols-1 gap-4 md:grid-cols-2'>
-            {[
-              'Artificial Intelligence Fundamentals',
-              'Data Fundamentals',
-              'Introduction to Cybersecurity',
-              'Networking Basics',
-              'Introduction to Modern AI',
-            ].map((title) => (
-              <CardContainer key={title} containerClassName='py-0' className='w-full'>
-                <CardBody className='relative h-auto w-full panel-surface p-6 [transform-style:preserve-3d]'>
-                  <CardItem translateZ='30' className='w-full'>
-                    <h4 className='text-lg font-bold text-white'>{title}</h4>
-                    <div className='mt-3'>
-                      <span className='rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400'>
-                        Completed
-                      </span>
-                    </div>
-                  </CardItem>
-                </CardBody>
-              </CardContainer>
-            ))}
-          </div>
-        </div>
+        </ul>
       </div>
-    </section>
+    </Reveal>
   )
 }
 
-export default SkillsSection
+function EduBlock({ edu }) {
+  return (
+    <div className='flex items-baseline justify-between gap-4'>
+      <div>
+        <h4 className='text-sm font-semibold text-white'>{edu.title}</h4>
+        <p className='mt-0.5 text-[13px] text-[var(--color-ink-muted)]'>{edu.place}</p>
+      </div>
+      <div className='flex items-center gap-3 shrink-0'>
+        <span className='text-[11px] tabular-nums text-[var(--color-ink-muted)]'>{edu.year}</span>
+        <span
+          className={`text-[10px] font-semibold uppercase tracking-wider ${
+            edu.status === 'ongoing' ? 'text-[var(--color-accent)]/70' : 'text-emerald-400/70'
+          }`}
+        >
+          {edu.status === 'ongoing' ? 'Ongoing' : 'Done'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+export default function SkillsSection() {
+  return (
+    <section id='skills' className='relative scroll-mt-24 px-6 py-16 md:py-28'>
+      <div className='mx-auto max-w-[1400px]'>
+        {/* Technology */}
+        <SectionHeading
+          index='04'
+          kicker='Technology'
+          title={<>The tools behind the work.</>}
+        />
+
+        <Reveal>
+          <p className='-mt-6 mb-10 text-[13px] text-[var(--color-ink-muted)]'>
+            Hover the orbiting nodes in the background to explore the full stack.
+          </p>
+        </Reveal>
+
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
+          {skillGroups.map((group, i) => (
+            <SkillGroup key={group.title} group={group} index={i} />
+          ))}
+        </div>
+
+        {/* Focus areas */}
+        <div className='mt-12 grid grid-cols-1 gap-8 md:grid-cols-2'>
+          <Reveal>
+            <div>
+              <h3 className='text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)]/80'>
+                AI &amp; Data
+              </h3>
+              <p className='mt-3 text-[0.85rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+                Building ML-powered tools including a disease prediction model covering 150+
+                diseases with XGBoost and Gradient Boosting, plus cloud analytics with BigQuery.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.04}>
+            <div>
+              <h3 className='text-[11px] font-bold uppercase tracking-[0.2em] text-violet-400/80'>
+                Full Stack
+              </h3>
+              <p className='mt-3 text-[0.85rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+                Building full-stack MERN applications — including real-time collaborative systems
+                and a paper trading platform with live market data.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Education */}
+        <div id='education' className='mt-24'>
+          <SectionHeading index='05' kicker='Education' title={<>Credentials.</>} />
+
+          <div className='flex flex-col gap-5'>
+            {education.map((edu) => (
+              <EduBlock key={edu.title} edu={edu} />
+            ))}
+          </div>
+
+          <div className='mt-10'>
+            <p className='section-label mb-4'>Certifications</p>
+            <div className='flex flex-wrap gap-x-6 gap-y-2'>
+              {certifications.map((title) => (
+                <span key={title} className='text-[13px] text-[var(--color-ink-secondary)]'>
+                  {title}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className='editorial-rule mx-auto mt-20 max-w-[1400px]' />
+    </section>
+  )
+}

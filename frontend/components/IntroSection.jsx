@@ -1,67 +1,51 @@
-import React from 'react'
-// Magic UI — Number Ticker
 import { NumberTicker } from './magicui/number-ticker'
-import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
+import { Reveal, SectionHeading } from './motion/primitives'
+import { stats } from '@/lib/data'
 
-function IntroSection() {
+function StatBlock({ stat }) {
   return (
-    <section
-      id='intro'
-      className='relative scroll-mt-24 px-6 py-24 md:py-32'
-    >
-      <div className='mx-auto grid max-w-6xl gap-12 lg:grid-cols-12 lg:items-end'>
-        <div className='lg:col-span-7'>
-          <p className='text-xs font-bold uppercase tracking-[0.2em] text-white/50'>
-            01 - Selected work
-          </p>
-          <div className='my-8 h-px w-full bg-white/20' />
-          <h2 className='max-w-5xl text-[clamp(3.5rem,12vw,11rem)] font-black uppercase leading-[0.82] tracking-tight text-white'>
-            Build.
-            <br />
-            Ship.
-            <br />
-            Learn.
-          </h2>
-          <p className='mt-8 max-w-[52ch] text-[clamp(1rem,2.2vw,1.6rem)] leading-relaxed text-white/75'>
-            A scrollable story of internships and projects built across data science, machine learning, and full-stack development.
-          </p>
-        </div>
-
-        <div className='grid grid-cols-1 gap-3 sm:grid-cols-3 lg:col-span-5'>
-          <CardContainer containerClassName='py-0' className='w-full'>
-            <CardBody className='relative h-auto w-full panel-surface p-4 md:p-5 [transform-style:preserve-3d]'>
-              <CardItem translateZ='30' className='w-full'>
-                <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>CGPA</p>
-                <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
-                  <NumberTicker value={8.87} decimalPlaces={2} className='text-white' />
-                </p>
-              </CardItem>
-            </CardBody>
-          </CardContainer>
-          <CardContainer containerClassName='py-0' className='w-full'>
-            <CardBody className='relative h-auto w-full panel-surface p-4 md:p-5 [transform-style:preserve-3d]'>
-              <CardItem translateZ='30' className='w-full'>
-                <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>Projects</p>
-                <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
-                  <NumberTicker value={3} className='text-white' />
-                </p>
-              </CardItem>
-            </CardBody>
-          </CardContainer>
-          <CardContainer containerClassName='py-0' className='w-full'>
-            <CardBody className='relative h-auto w-full panel-surface p-4 md:p-5 [transform-style:preserve-3d]'>
-              <CardItem translateZ='30' className='w-full'>
-                <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>Internships</p>
-                <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
-                  <NumberTicker value={2} className='text-white' />
-                </p>
-              </CardItem>
-            </CardBody>
-          </CardContainer>
-        </div>
-      </div>
-    </section>
+    <div className='flex flex-col'>
+      <p className='text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-ink-muted)]'>
+        {stat.label}
+      </p>
+      <p className='mt-1.5 text-3xl font-bold tabular-nums text-white md:text-4xl'>
+        <NumberTicker value={stat.value} decimalPlaces={stat.decimals} className='text-white' />
+      </p>
+    </div>
   )
 }
 
-export default IntroSection
+export default function IntroSection() {
+  return (
+    <section id='intro' className='relative scroll-mt-24 px-6 py-24 md:py-36'>
+      <div className='mx-auto grid max-w-[1400px] gap-12 lg:grid-cols-12 lg:items-end'>
+        <div className='lg:col-span-7'>
+          <SectionHeading index='01' kicker='Introduction' title={null} />
+          <Reveal delay={0.08}>
+            <h2 className='text-[clamp(3rem,9vw,8rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-white [text-wrap:balance]'>
+              Build.
+              <br />
+              Ship.
+              <br />
+              <span className='accent-text'>Learn.</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <p className='mt-8 max-w-[48ch] text-[clamp(0.95rem,1.8vw,1.25rem)] leading-[1.7] text-[var(--color-ink-secondary)]'>
+              A story of internships and projects built across data science, machine
+              learning, and full-stack development.
+            </p>
+          </Reveal>
+        </div>
+
+        <div className='grid grid-cols-3 gap-6 lg:col-span-5'>
+          {stats.map((stat) => (
+            <StatBlock key={stat.label} stat={stat} />
+          ))}
+        </div>
+      </div>
+
+      <div className='editorial-rule mx-auto mt-20 max-w-[1400px]' />
+    </section>
+  )
+}

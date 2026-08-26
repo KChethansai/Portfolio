@@ -1,37 +1,48 @@
-import React from 'react'
-// Magic UI — Terminal
 import { AnimatedSpan, Terminal, TypingAnimation } from './magicui/terminal'
+import { Reveal } from './motion/primitives'
 
-function TerminalSection() {
+export default function TerminalSection() {
   return (
-    <section id='terminal' className='relative scroll-mt-24 px-6 py-16 md:py-24'>
-      <div className='mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-center md:justify-between'>
-        <div className='max-w-md'>
-          <p className='text-xs font-bold uppercase tracking-[0.2em] text-white/50'>05 - Shell</p>
-          <h2 className='mt-4 text-3xl font-semibold tracking-tight text-white md:text-5xl'>
-            Chethan Sai Kakunuri
+    <section id='terminal' className='relative scroll-mt-24 px-6 py-16 md:py-28'>
+      <div className='mx-auto grid max-w-[1400px] gap-10 md:grid-cols-12 md:items-center'>
+        <Reveal className='md:col-span-5'>
+          <p className='section-label flex items-center gap-3'>
+            <span className='text-[var(--color-accent)]'>06</span>
+            <span className='h-px w-6 bg-white/10' aria-hidden />
+            Shell
+          </p>
+          <h2 className='mt-4 text-[clamp(1.75rem,4vw,3rem)] font-bold tracking-tight leading-[1.1] text-white'>
+            The person
+            <br />
+            behind the
+            <br />
+            <span className='font-mono text-[var(--color-accent)]'>prompt.</span>
           </h2>
-        </div>
+        </Reveal>
 
-        <Terminal className='w-full max-w-xl border-white/12 bg-black/50 text-white'>
-          <TypingAnimation className='text-cyan-300'>$ whoami</TypingAnimation>
-          <AnimatedSpan className='text-white/80'>Chethan Sai Kakunuri</AnimatedSpan>
-          <TypingAnimation className='text-cyan-300'>$ cat role.txt</TypingAnimation>
-          <AnimatedSpan className='text-white/80'>
-            B.Tech CSE (Data Science) — Anurag University, Hyderabad
-          </AnimatedSpan>
-          <TypingAnimation className='text-cyan-300'>$ echo $CGPA</TypingAnimation>
-          <AnimatedSpan className='text-white/80'>8.87</AnimatedSpan>
-          <TypingAnimation className='text-cyan-300'>$ ls projects/</TypingAnimation>
-          <AnimatedSpan className='text-white/80'>MarketForge  AI-Health-Prediction  Kanvora</AnimatedSpan>
-          <TypingAnimation className='text-cyan-300'>$ ls experience/</TypingAnimation>
-          <AnimatedSpan className='text-white/80'>
-            Suntek-IT-Solutions  Google-Cloud-EduSkills-AICTE
-          </AnimatedSpan>
-        </Terminal>
+        <Reveal delay={0.08} className='md:col-span-7'>
+          <Terminal className='w-full border-white/[0.06] bg-black/40 font-mono text-white/90'>
+            <TypingAnimation className='text-[var(--color-accent)]'>$ whoami</TypingAnimation>
+            <AnimatedSpan className='text-white/75'>Chethan Sai Kakunuri</AnimatedSpan>
+            <TypingAnimation className='text-[var(--color-accent)]'>$ cat role.txt</TypingAnimation>
+            <AnimatedSpan className='text-white/75'>
+              B.Tech CSE (Data Science) — Anurag University, Hyderabad
+            </AnimatedSpan>
+            <TypingAnimation className='text-[var(--color-accent)]'>$ echo $CGPA</TypingAnimation>
+            <AnimatedSpan className='text-white/75'>8.87</AnimatedSpan>
+            <TypingAnimation className='text-[var(--color-accent)]'>$ ls projects/</TypingAnimation>
+            <AnimatedSpan className='text-white/75'>
+              MarketForge  AI-Health-Prediction  Kanvora
+            </AnimatedSpan>
+            <TypingAnimation className='text-[var(--color-accent)]'>$ ls experience/</TypingAnimation>
+            <AnimatedSpan className='text-white/75'>
+              Suntek-IT-Solutions  Google-Cloud-EduSkills-AICTE
+            </AnimatedSpan>
+            <TypingAnimation className='text-violet-400'>$ status --availability</TypingAnimation>
+            <AnimatedSpan className='text-emerald-400/80'>open to opportunities</AnimatedSpan>
+          </Terminal>
+        </Reveal>
       </div>
     </section>
   )
 }
-
-export default TerminalSection

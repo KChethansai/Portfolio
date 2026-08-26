@@ -1,172 +1,53 @@
-'use client';
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { useEffect, useRef, useState, createElement, useMemo, useCallback } from 'react';
-import { gsap } from 'gsap';
-
-const TextType = ({
+// Minimal typewriter — interval-driven, CSS-blinking cursor. No GSAP.
+export default function TextType({
   text,
-  as: Component = 'div',
-  typingSpeed = 50,
-  initialDelay = 0,
+  typingSpeed = 70,
   pauseDuration = 2000,
-  deletingSpeed = 30,
+  deletingSpeed = 32,
   loop = true,
-  className = '',
   showCursor = true,
-  hideCursorWhileTyping = false,
   cursorCharacter = '|',
-  cursorClassName = '',
-  cursorBlinkDuration = 0.5,
-  textColors = [],
-  variableSpeed,
-  onSentenceComplete,
-  startOnVisible = false,
-  reverseMode = false,
-  ...props
-}) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(!startOnVisible);
-  const cursorRef = useRef(null);
-  const containerRef = useRef(null);
-
-  const textArray = useMemo(() => (Array.isArray(text) ? text : [text]), [text]);
-
-  const getRandomSpeed = useCallback(() => {
-    if (!variableSpeed) return typingSpeed;
-    const { min, max } = variableSpeed;
-    return Math.random() * (max - min) + min;
-  }, [variableSpeed, typingSpeed]);
-
-  const getCurrentTextColor = () => {
-    if (textColors.length === 0) return 'inherit';
-    return textColors[currentTextIndex % textColors.length];
-  };
+  className = '',
+}) {
+  const phrases = useMemo(() => (Array.isArray(text) ? text : [text]), [text])
+  const [displayed, setDisplayed] = useState('')
+  const [phase, setPhase] = useState('typing') // typing | pausing | deleting
+  const index = useRef(0)
 
   useEffect(() => {
-    if (!startOnVisible || !containerRef.current) return;
+    if (phrases.length === 0) return
+    const current = phrases[index.current % phrases.length]
 
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [startOnVisible]);
-
-  useEffect(() => {
-    if (showCursor && cursorRef.current) {
-      gsap.set(cursorRef.current, { opacity: 1 });
-      gsap.to(cursorRef.current, {
-        opacity: 0,
-        duration: cursorBlinkDuration,
-        repeat: -1,
-        yoyo: true,
-        ease: 'power2.inOut'
-      });
-    }
-  }, [showCursor, cursorBlinkDuration]);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let timeout;
-
-    const currentText = textArray[currentTextIndex];
-    const processedText = reverseMode ? currentText.split('').reverse().join('') : currentText;
-
-    const executeTypingAnimation = () => {
-      if (isDeleting) {
-        if (displayedText === '') {
-          setIsDeleting(false);
-          if (currentTextIndex === textArray.length - 1 && !loop) {
-            return;
-          }
-
-          if (onSentenceComplete) {
-            onSentenceComplete(textArray[currentTextIndex], currentTextIndex);
-          }
-
-          setCurrentTextIndex(prev => (prev + 1) % textArray.length);
-          setCurrentCharIndex(0);
-          timeout = setTimeout(() => {}, pauseDuration);
-        } else {
-          timeout = setTimeout(() => {
-            setDisplayedText(prev => prev.slice(0, -1));
-          }, deletingSpeed);
-        }
-      } else {
-        if (currentCharIndex < processedText.length) {
-          timeout = setTimeout(
-            () => {
-              setDisplayedText(prev => prev + processedText[currentCharIndex]);
-              setCurrentCharIndex(prev => prev + 1);
-            },
-            variableSpeed ? getRandomSpeed() : typingSpeed
-          );
-        } else if (textArray.length >= 1) {
-          if (!loop && currentTextIndex === textArray.length - 1) return;
-          timeout = setTimeout(() => {
-            setIsDeleting(true);
-          }, pauseDuration);
-        }
+    if (phase === 'typing') {
+      if (displayed.length < current.length) {
+        const id = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), typingSpeed)
+        return () => clearTimeout(id)
       }
-    };
-
-    if (currentCharIndex === 0 && !isDeleting && displayedText === '') {
-      timeout = setTimeout(executeTypingAnimation, initialDelay);
-    } else {
-      executeTypingAnimation();
+      const id = setTimeout(() => setPhase('deleting'), pauseDuration)
+      return () => clearTimeout(id)
     }
 
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentCharIndex,
-    displayedText,
-    isDeleting,
-    typingSpeed,
-    deletingSpeed,
-    pauseDuration,
-    textArray,
-    currentTextIndex,
-    loop,
-    initialDelay,
-    isVisible,
-    reverseMode,
-    variableSpeed,
-    onSentenceComplete
-  ]);
+    // deleting
+    if (displayed.length > 0) {
+      const id = setTimeout(() => setDisplayed(current.slice(0, displayed.length - 1)), deletingSpeed)
+      return () => clearTimeout(id)
+    }
+    index.current = (index.current + 1) % phrases.length
+    if (!loop && index.current === 0) return undefined
+    setPhase('typing')
+    return undefined
+  }, [displayed, phase, phrases, typingSpeed, pauseDuration, deletingSpeed, loop])
 
-  const shouldHideCursor =
-    hideCursorWhileTyping && (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
-
-  return createElement(
-    Component,
-    {
-      ref: containerRef,
-      className: `inline-block whitespace-pre-wrap tracking-tight ${className}`,
-      ...props
-    },
-    createElement('span', { className: 'inline', style: { color: getCurrentTextColor() || 'inherit' } }, displayedText),
-    showCursor && createElement(
-      'span',
-      {
-        ref: cursorRef,
-        className: `ml-1 inline-block opacity-100 ${shouldHideCursor ? 'hidden' : ''} ${cursorClassName}`
-      },
-      cursorCharacter
-    )
-  );
-};
-
-export default TextType;
+  return (
+    <span className={`inline-block whitespace-nowrap ${className}`} aria-label={phrases[0]}>
+      <span aria-hidden>{displayed}</span>
+      {showCursor && (
+        <span aria-hidden className='ml-0.5 inline-block animate-[type-blink_1s_steps(1)_infinite]'>
+          {cursorCharacter}
+        </span>
+      )}
+    </span>
+  )
+}

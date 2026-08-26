@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
 import { Mail, FileText, ArrowUp, ArrowUpRight } from 'lucide-react'
-// Magic UI — Meteors
-import { Meteors } from './magicui/meteors'
+import { Reveal, Magnetic } from './motion/primitives'
+import { profile } from '@/lib/data'
 
 function GithubIcon({ className = 'h-4 w-4' }) {
   return (
@@ -19,111 +18,87 @@ function LinkedinIcon({ className = 'h-4 w-4' }) {
   )
 }
 
-function SiteFooter() {
-  const [showMeteors, setShowMeteors] = useState(false)
+const linkClass =
+  'group inline-flex items-center gap-2 text-[13px] font-medium text-[var(--color-ink-muted)] transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/50'
 
-  useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    setShowMeteors(!reduce)
-  }, [])
+export default function SiteFooter() {
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  const links = [
+    { label: 'Email', href: `mailto:${profile.email}`, icon: Mail },
+    { label: 'GitHub', href: profile.github, icon: GithubIcon },
+    { label: 'LinkedIn', href: profile.linkedin, icon: LinkedinIcon },
+    { label: 'Resume', href: profile.resume, icon: FileText },
+  ]
 
   return (
-    <footer className='relative overflow-hidden border-t border-white/10 bg-[var(--bg-void)] px-6 py-16 md:py-20'>
-      {/* Top glowing gradient line */}
-      <div className='pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[1px] w-full max-w-4xl bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent' />
-      <div className='pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-24 w-72 -translate-y-12 bg-cyan-500/10 blur-2xl rounded-full' />
+    <footer className='relative overflow-hidden px-6 pb-16 pt-28 md:pt-36'>
+      <div className='relative z-10 mx-auto max-w-[1400px]'>
+        <Reveal>
+          <p className='section-label text-center'>End of transmission</p>
+          <h2 className='mt-6 text-center text-[clamp(2.4rem,7vw,6rem)] font-black leading-[0.92] tracking-[-0.03em] text-white [text-wrap:balance]'>
+            Let's build
+            <br />
+            <span className='accent-text'>something.</span>
+          </h2>
+        </Reveal>
 
-      {showMeteors ? (
-        <div className='pointer-events-none absolute inset-0 opacity-30'>
-          <Meteors number={12} />
-        </div>
-      ) : null}
+        <Reveal delay={0.1}>
+          <div className='mt-10 flex justify-center'>
+            <Magnetic strength={0.3}>
+              <a
+                href={`mailto:${profile.email}`}
+                className='rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]'
+              >
+                Start a conversation
+              </a>
+            </Magnetic>
+          </div>
+        </Reveal>
 
-      <div className='relative z-10 mx-auto max-w-6xl'>
-        <div className='flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between'>
-          <div className='max-w-md'>
-            <div className='inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400'>
-              <span className='relative flex h-2 w-2'>
-                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75' />
-                <span className='relative inline-flex h-2 w-2 rounded-full bg-emerald-500' />
-              </span>
-              Available for new opportunities
+        <Reveal delay={0.16}>
+          <div className='mt-20 flex flex-col items-start justify-between gap-8 border-t border-white/[0.06] pt-10 lg:flex-row lg:items-center'>
+            <div className='max-w-md'>
+              <div className='inline-flex items-center gap-2 text-[11px] font-medium text-emerald-400/70'>
+                <span className='relative flex h-1.5 w-1.5'>
+                  <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50' />
+                  <span className='relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500' />
+                </span>
+                Available for opportunities
+              </div>
+              <h3 className='mt-3 text-base font-semibold tracking-tight text-white'>{profile.name}</h3>
+              <p className='mt-1 text-[13px] leading-relaxed text-[var(--color-ink-muted)]'>{profile.tagline}</p>
             </div>
 
-            <h3 className='mt-4 text-xl font-bold tracking-tight text-white md:text-2xl'>
-              Chethan Sai Kakunuri
-            </h3>
-            <p className='mt-2 text-sm leading-relaxed text-white/60'>
-              Computer Science (Data Science) student at Anurag University with hands-on experience building full-stack MERN applications and ML-powered tools.
-            </p>
+            <div className='flex flex-wrap items-center gap-6'>
+              {links.map(({ label, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target={href.startsWith('http') || href.endsWith('.pdf') ? '_blank' : undefined}
+                  rel='noopener noreferrer'
+                  className={linkClass}
+                >
+                  <Icon className='h-4 w-4 opacity-60' />
+                  <span>{label}</span>
+                  <ArrowUpRight className='h-3 w-3 opacity-30 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-60' />
+                </a>
+              ))}
+            </div>
           </div>
+        </Reveal>
 
-          {/* Action Links */}
-          <div className='flex flex-wrap items-center gap-3'>
-            <a
-              href='mailto:kakunurichethansai@gmail.com'
-              className='group inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] px-4 py-2.5 text-xs font-medium text-white/80 transition-all duration-300 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60'
-            >
-              <Mail className='h-4 w-4 text-cyan-400 transition-transform group-hover:scale-110' />
-              <span>Email</span>
-              <ArrowUpRight className='h-3.5 w-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100' />
-            </a>
-
-            <a
-              href='https://github.com/KChethansai'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='group inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] px-4 py-2.5 text-xs font-medium text-white/80 transition-all duration-300 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60'
-            >
-              <GithubIcon className='h-4 w-4 text-cyan-400 transition-transform group-hover:scale-110' />
-              <span>GitHub</span>
-              <ArrowUpRight className='h-3.5 w-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100' />
-            </a>
-
-            <a
-              href='https://www.linkedin.com/in/kakunuri-chethan-sai-130a503b5'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='group inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] px-4 py-2.5 text-xs font-medium text-white/80 transition-all duration-300 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60'
-            >
-              <LinkedinIcon className='h-4 w-4 text-cyan-400 transition-transform group-hover:scale-110' />
-              <span>LinkedIn</span>
-              <ArrowUpRight className='h-3.5 w-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100' />
-            </a>
-
-            <a
-              href='/resume.pdf'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='group inline-flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-2.5 text-xs font-medium text-violet-200 transition-all duration-300 hover:border-violet-400 hover:bg-violet-500/20 hover:text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60'
-            >
-              <FileText className='h-4 w-4 text-violet-400 transition-transform group-hover:scale-110' />
-              <span>Resume</span>
-              <ArrowUpRight className='h-3.5 w-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100' />
-            </a>
-          </div>
-        </div>
-
-        <div className='my-10 h-px w-full bg-white/10' />
-
-        <div className='flex flex-col items-center justify-between gap-4 text-xs text-white/40 sm:flex-row'>
-          <p>© 2026 Chethan Sai Kakunuri. All rights reserved.</p>
-
+        <div className='mt-10 flex flex-col items-center justify-between gap-4 text-[12px] text-[var(--color-ink-faint)] sm:flex-row'>
+          <p>© 2026 {profile.name}</p>
           <button
             onClick={scrollToTop}
-            className='group inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] px-3 py-1.5 text-xs text-white/60 transition-all hover:border-white/25 hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60'
+            className='group inline-flex items-center gap-1.5 text-[12px] text-[var(--color-ink-muted)] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/50'
           >
             <span>Back to top</span>
-            <ArrowUp className='h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5' />
+            <ArrowUp className='h-3 w-3 transition-transform group-hover:-translate-y-0.5' />
           </button>
         </div>
       </div>
     </footer>
   )
 }
-
-export default SiteFooter
