@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import {
   Cloud,
   fetchSimpleIcons,
@@ -21,15 +21,15 @@ export const cloudProps = {
     reverse: true,
     depth: 1,
     wheelZoom: false,
-    imageScale: 2,
+    imageScale: 1,
     activeCursor: 'default',
     tooltip: 'native',
     initial: [0.1, -0.1],
     clickToFront: 500,
     tooltipDelay: 0,
     outlineColour: '#0000',
-    maxSpeed: 0.04,
-    minSpeed: 0.02,
+    maxSpeed: 0.025,
+    minSpeed: 0.01,
   },
 }
 
@@ -52,6 +52,19 @@ function renderCustomIcon(icon) {
 export function IconCloud({ iconSlugs }) {
   const [data, setData] = useState(null)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const [isInView, setIsInView] = useState(false)
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+      },
+      { rootMargin: '200px' }
+    )
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -70,9 +83,9 @@ export function IconCloud({ iconSlugs }) {
     return Object.values(data.simpleIcons).map((icon) => renderCustomIcon(icon))
   }, [data])
 
-  if (reducedMotion) {
+  if (reducedMotion || !isInView) {
     return (
-      <div className='flex h-full w-full flex-wrap items-center justify-center gap-3 p-6'>
+      <div ref={containerRef} className='flex h-full w-full flex-wrap items-center justify-center gap-3 p-6'>
         {(iconSlugs || []).slice(0, 12).map((slug) => (
           <span
             key={slug}
@@ -87,7 +100,9 @@ export function IconCloud({ iconSlugs }) {
 
   return (
     // react-icon-cloud Cloud children typing
-    <Cloud {...cloudProps}>{renderedIcons}</Cloud>
+    <div ref={containerRef} className="h-full w-full flex items-center justify-center">
+      <Cloud {...cloudProps}>{renderedIcons}</Cloud>
+    </div>
   )
 }
 

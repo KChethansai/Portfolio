@@ -8,7 +8,7 @@ function ScrollIndicator() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.6 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className='relative w-full bg-black text-white flex flex-col items-center justify-center  select-none'
+      className='relative w-full bg-black text-white flex flex-col items-center justify-center select-none mb-24 md:mb-0'
     >
       <p className='text-xs md:text-sm tracking-[0.4em] font-medium text-white/80'>
         SCROLL

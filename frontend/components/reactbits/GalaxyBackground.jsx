@@ -16,7 +16,7 @@ function GalaxyFallback() {
   )
 }
 
-export function GalaxyBackground({ className = '', density = 0.8, ...props }) {
+export function GalaxyBackground({ className = '', ...props }) {
   const [enabled, setEnabled] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -39,14 +39,16 @@ export function GalaxyBackground({ className = '', density = 0.8, ...props }) {
     <div className={className}>
       <Suspense fallback={<GalaxyFallback />}>
         <Galaxy
-          density={isMobile ? 0.4 : density}
-          glowIntensity={0.25}
+          density={isMobile ? 0.3 : 0.45}
+          glowIntensity={0.2}
           saturation={0.35}
           hueShift={200}
           twinkleIntensity={0.2}
-          mouseRepulsion
+          mouseRepulsion={false}
           mouseInteraction
           transparent
+          resolutionScale={0.5}
+          maxFPS={30}
           {...props}
         />
       </Suspense>

@@ -3,8 +3,6 @@ import React from 'react'
 import { BorderBeam } from './magicui/border-beam'
 // Magic UI — Number Ticker
 import { NumberTicker } from './magicui/number-ticker'
-// Kokonut UI — Spotlight Cards
-import { SpotlightCard } from './kokonutui/spotlight-card'
 // Aceternity — 3D Card Effect
 import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
 
@@ -32,23 +30,29 @@ const projects = [
 
 function FlagshipCard({ item }) {
   return (
-    <SpotlightCard color='#22d3ee' className='relative col-span-1 md:col-span-2'>
-      <BorderBeam size={80} duration={10} colorFrom='#22d3ee' colorTo='#8b5cf6' />
-      <div className='p-6 md:p-8'>
-        <p className='text-xs font-bold uppercase tracking-[0.2em] text-cyan-300'>Project</p>
-        <h3 className='mt-3 text-2xl font-bold tracking-tight text-white md:text-4xl'>{item.title}</h3>
-        <p className='mt-2 text-sm text-white/60'>
-          {item.tech} - {item.year}
-        </p>
-        <p className='mt-6 max-w-3xl text-base leading-relaxed text-white/75 md:text-lg'>{item.summary}</p>
-        <div className='mt-8 inline-flex items-baseline gap-2 rounded-[var(--radius-sm)] border border-white/12 bg-black/30 px-4 py-3'>
-          <span className='text-3xl font-bold text-white'>
-            <NumberTicker value={30} className='text-white' />
-          </span>
-          <span className='text-xs font-semibold uppercase tracking-[0.18em] text-white/50'>stocks tracked</span>
-        </div>
-      </div>
-    </SpotlightCard>
+    <CardContainer containerClassName='py-0 col-span-1 md:col-span-2' className='w-full'>
+      <CardBody className='relative h-auto w-full rounded-[var(--radius-lg)] border border-white/12 bg-white/[0.03] p-6 md:p-8 [transform-style:preserve-3d]'>
+        <BorderBeam size={80} duration={10} colorFrom='#22d3ee' colorTo='#8b5cf6' />
+        <CardItem translateZ='40' className='w-full'>
+          <p className='text-xs font-bold uppercase tracking-[0.2em] text-cyan-300'>Project</p>
+          <h3 className='mt-3 text-2xl font-bold tracking-tight text-white md:text-4xl'>{item.title}</h3>
+          <p className='mt-2 text-sm text-white/60'>
+            {item.tech} - {item.year}
+          </p>
+        </CardItem>
+        <CardItem translateZ='20' className='mt-6 w-full'>
+          <p className='max-w-3xl text-base leading-relaxed text-white/75 md:text-lg'>{item.summary}</p>
+        </CardItem>
+        <CardItem translateZ='30' className='mt-8'>
+          <div className='inline-flex items-baseline gap-2 rounded-[var(--radius-sm)] border border-white/12 bg-black/30 px-4 py-3'>
+            <span className='text-3xl font-bold text-white'>
+              <NumberTicker value={30} className='text-white' />
+            </span>
+            <span className='text-xs font-semibold uppercase tracking-[0.18em] text-white/50'>stocks tracked</span>
+          </div>
+        </CardItem>
+      </CardBody>
+    </CardContainer>
   )
 }
 

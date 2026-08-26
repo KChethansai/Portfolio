@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, useState } from 'react';
+import { useRef, useLayoutEffect, useState, useEffect } from 'react';
 import {
   motion,
   useScroll,
@@ -54,6 +54,19 @@ export const ScrollVelocity = ({
     parallaxStyle,
     scrollerStyle
   }) {
+    const containerRef = useRef(null);
+    const [isInView, setIsInView] = useState(false);
+
+    useEffect(() => {
+      if (!containerRef.current) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => setIsInView(entry.isIntersecting),
+        { rootMargin: '100px' }
+      );
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    }, []);
+
     const baseX = useMotionValue(0);
     const scrollOptions = scrollContainerRef ? { container: scrollContainerRef } : {};
     const { scrollY } = useScroll(scrollOptions);
@@ -85,6 +98,7 @@ export const ScrollVelocity = ({
 
     const directionFactor = useRef(1);
     useAnimationFrame((t, delta) => {
+      if (!isInView) return;
       let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
 
       if (velocityFactor.get() < 0) {
@@ -107,7 +121,7 @@ export const ScrollVelocity = ({
     }
 
     return (
-      <div className={`${parallaxClassName} relative overflow-hidden`} style={parallaxStyle}>
+      <div ref={containerRef} className={`${parallaxClassName} relative overflow-hidden`} style={parallaxStyle}>
         <motion.div
           className={`${scrollerClassName} flex whitespace-nowrap text-center font-sans text-4xl font-bold tracking-[-0.02em] drop-shadow md:text-[5rem] md:leading-[5rem]`}
           style={{ x, ...scrollerStyle }}

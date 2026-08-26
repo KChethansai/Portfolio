@@ -29,7 +29,7 @@ function Navbar() {
   ]
 
   return (
-    <div className='pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 md:top-6 md:bottom-auto'>
+    <div className='pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 max-w-[calc(100vw-2rem)] mx-auto md:max-w-none md:top-6 md:bottom-auto'>
       <Dock
         className='pointer-events-auto border-white/12 bg-black/40 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]'
         iconSize={42}

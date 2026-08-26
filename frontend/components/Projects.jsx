@@ -68,7 +68,7 @@ function ProjectCard({ project }) {
       viewport={{ once: true }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 transition-all duration-300 hover:border-white/30 hover:shadow-2xl hover:shadow-purple-500/20"
+      className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 transition-all duration-300 hover:border-white/30 hover:shadow-2xl hover:shadow-purple-500/20 cursor-pointer"
     >
       {/* Image container */}
       <div className="relative h-48 overflow-hidden">

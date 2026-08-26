@@ -1,6 +1,7 @@
 import React from 'react'
 // Magic UI — Number Ticker
 import { NumberTicker } from './magicui/number-ticker'
+import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
 
 function IntroSection() {
   return (
@@ -26,25 +27,37 @@ function IntroSection() {
           </p>
         </div>
 
-        <div className='grid grid-cols-3 gap-3 lg:col-span-5'>
-          <div className='panel-surface p-4 md:p-5'>
-            <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>CGPA</p>
-            <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
-              <NumberTicker value={8.87} decimalPlaces={2} className='text-white' />
-            </p>
-          </div>
-          <div className='panel-surface p-4 md:p-5'>
-            <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>Projects</p>
-            <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
-              <NumberTicker value={3} className='text-white' />
-            </p>
-          </div>
-          <div className='panel-surface p-4 md:p-5'>
-            <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>Internships</p>
-            <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
-              <NumberTicker value={2} className='text-white' />
-            </p>
-          </div>
+        <div className='grid grid-cols-1 gap-3 sm:grid-cols-3 lg:col-span-5'>
+          <CardContainer containerClassName='py-0' className='w-full'>
+            <CardBody className='relative h-auto w-full panel-surface p-4 md:p-5 [transform-style:preserve-3d]'>
+              <CardItem translateZ='30' className='w-full'>
+                <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>CGPA</p>
+                <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
+                  <NumberTicker value={8.87} decimalPlaces={2} className='text-white' />
+                </p>
+              </CardItem>
+            </CardBody>
+          </CardContainer>
+          <CardContainer containerClassName='py-0' className='w-full'>
+            <CardBody className='relative h-auto w-full panel-surface p-4 md:p-5 [transform-style:preserve-3d]'>
+              <CardItem translateZ='30' className='w-full'>
+                <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>Projects</p>
+                <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
+                  <NumberTicker value={3} className='text-white' />
+                </p>
+              </CardItem>
+            </CardBody>
+          </CardContainer>
+          <CardContainer containerClassName='py-0' className='w-full'>
+            <CardBody className='relative h-auto w-full panel-surface p-4 md:p-5 [transform-style:preserve-3d]'>
+              <CardItem translateZ='30' className='w-full'>
+                <p className='text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45'>Internships</p>
+                <p className='mt-2 text-3xl font-bold text-white md:text-4xl'>
+                  <NumberTicker value={2} className='text-white' />
+                </p>
+              </CardItem>
+            </CardBody>
+          </CardContainer>
         </div>
       </div>
     </section>

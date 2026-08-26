@@ -23,33 +23,59 @@ export const CardContainer = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
+  const rectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
-    const { left, top, width, height } =
-      containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - left - width / 2) / 25;
-    const y = (e.clientY - top - height / 2) / 25;
+    if (!rectRef.current) {
+      rectRef.current = containerRef.current.getBoundingClientRect();
+    }
+    const { left, top, width, height } = rectRef.current;
+    if (width <= 0 || height <= 0) return;
+
+    const rawX = e.clientX - left;
+    const rawY = e.clientY - top;
+
+    // Strict boundary check: only tilt when pointer is strictly inside the card
+    if (rawX < 0 || rawX > width || rawY < 0 || rawY > height) {
+      if (isMouseEntered) {
+        setIsMouseEntered(false);
+        containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
+      }
+      return;
+    }
+
+    if (!isMouseEntered) {
+      setIsMouseEntered(true);
+    }
+
+    const x = (rawX - width / 2) / 25;
+    const y = (rawY - height / 2) / 25;
     containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsMouseEntered(true);
     if (!containerRef.current) return;
+    rectRef.current = containerRef.current.getBoundingClientRect();
+    const { left, top, width, height } = rectRef.current;
+    const rawX = e.clientX - left;
+    const rawY = e.clientY - top;
+    if (rawX >= 0 && rawX <= width && rawY >= 0 && rawY <= height) {
+      setIsMouseEntered(true);
+    }
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseLeave = () => {
     if (!containerRef.current) return;
+    rectRef.current = null;
     setIsMouseEntered(false);
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
   };
+
   return (
     <MouseEnterContext.Provider value={[isMouseEntered, setIsMouseEntered]}>
       <div
-        className={cn(
-          "py-20 flex items-center justify-center",
-          containerClassName
-        )}
+        className={cn("w-full h-full", containerClassName)}
         style={{
           perspective: "1000px",
         }}
@@ -60,7 +86,7 @@ export const CardContainer = ({
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className={cn(
-            "flex items-center justify-center relative transition-all duration-200 ease-linear",
+            "relative w-full h-full transition-transform duration-200 ease-out cursor-pointer",
             className
           )}
           style={{
@@ -78,13 +104,13 @@ export const CardBody = ({
   children,
   className,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }) => {
   return (
     <div
       className={cn(
-        "h-96 w-96 [transform-style:preserve-3d]  [&>*]:[transform-style:preserve-3d]",
+        "h-full w-full [transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]",
         className
       )}
     >

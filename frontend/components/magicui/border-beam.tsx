@@ -1,4 +1,5 @@
-import { motion, type MotionStyle, type Transition } from "motion/react"
+import { motion, type MotionStyle, type Transition, useReducedMotion } from "motion/react"
+import { useRef, useState, useEffect } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -62,8 +63,23 @@ export const BorderBeam = ({
   initialOffset = 0,
   borderWidth = 1,
 }: BorderBeamProps) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isInView, setIsInView] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (!ref.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: '100px' }
+    )
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div
+      ref={ref}
       className="pointer-events-none absolute inset-0 rounded-[inherit] border-(length:--border-beam-width) border-transparent mask-[linear-gradient(transparent,transparent),linear-gradient(#000,#000)] mask-intersect [mask-clip:padding-box,border-box]"
       style={
         {
@@ -87,11 +103,15 @@ export const BorderBeam = ({
           } as MotionStyle
         }
         initial={{ offsetDistance: `${initialOffset}%` }}
-        animate={{
-          offsetDistance: reverse
-            ? [`${100 - initialOffset}%`, `${-initialOffset}%`]
-            : [`${initialOffset}%`, `${100 + initialOffset}%`],
-        }}
+        animate={
+          isInView && !prefersReducedMotion
+            ? {
+                offsetDistance: reverse
+                  ? [`${100 - initialOffset}%`, `${-initialOffset}%`]
+                  : [`${initialOffset}%`, `${100 + initialOffset}%`],
+              }
+            : { offsetDistance: `${initialOffset}%` }
+        }
         transition={{
           repeat: Infinity,
           ease: "linear",

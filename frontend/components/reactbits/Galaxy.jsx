@@ -15,7 +15,7 @@ void main() {
 `;
 
 const fragmentShader = `
-precision highp float;
+precision mediump float;
 
 uniform float uTime;
 uniform vec3 uResolution;
@@ -38,15 +38,14 @@ uniform bool uTransparent;
 
 varying vec2 vUv;
 
-#define NUM_LAYER 4.0
+#define NUM_LAYER 2.0
 #define STAR_COLOR_CUTOFF 0.2
-#define MAT45 mat2(0.7071, -0.7071, 0.7071, 0.7071)
 #define PERIOD 3.0
 
-float Hash21(vec2 p) {
-  p = fract(p * vec2(123.34, 456.21));
-  p += dot(p, p + 45.32);
-  return fract(p.x * p.y);
+vec3 Hash23(vec2 p) {
+  vec3 q = fract(vec3(p.xyx) * vec3(123.34, 456.21, 234.56));
+  q += dot(q, q + 45.32);
+  return fract((q.xxy + q.yzz) * q.zyx);
 }
 
 float tri(float x) {
@@ -71,12 +70,9 @@ vec3 hsv2rgb(vec3 c) {
 
 float Star(vec2 uv, float flare) {
   float d = length(uv);
-  float m = (0.05 * uGlowIntensity) / d;
-  float rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
+  float m = (0.045 * uGlowIntensity) / (d + 0.002);
+  float rays = max(0.0, 1.0 - abs(uv.x * uv.y * 800.0));
   m += rays * flare * uGlowIntensity;
-  uv *= MAT45;
-  rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
-  m += rays * 0.3 * flare * uGlowIntensity;
   m *= smoothstep(1.0, 0.2, d);
   return m;
 }
@@ -90,33 +86,33 @@ vec3 StarLayer(vec2 uv) {
   for (int y = -1; y <= 1; y++) {
     for (int x = -1; x <= 1; x++) {
       vec2 offset = vec2(float(x), float(y));
-      vec2 si = id + vec2(float(x), float(y));
-      float seed = Hash21(si);
-      float size = fract(seed * 345.32);
+      vec2 si = id + offset;
+      vec3 rnd = Hash23(si);
+      float seed = rnd.x;
+      float size = rnd.y;
       float glossLocal = tri(uStarSpeed / (PERIOD * seed + 1.0));
-      float flareSize = smoothstep(0.9, 1.0, size) * glossLocal;
+      float flareSize = smoothstep(0.85, 1.0, size) * glossLocal;
 
-      float red = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(si + 1.0)) + STAR_COLOR_CUTOFF;
-      float blu = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(si + 3.0)) + STAR_COLOR_CUTOFF;
+      float red = smoothstep(STAR_COLOR_CUTOFF, 1.0, rnd.z) + STAR_COLOR_CUTOFF;
+      float blu = smoothstep(STAR_COLOR_CUTOFF, 1.0, rnd.y) + STAR_COLOR_CUTOFF;
       float grn = min(red, blu) * seed;
       vec3 base = vec3(red, grn, blu);
       
-      float hue = atan(base.g - base.r, base.b - base.r) / (2.0 * 3.14159) + 0.5;
+      float hue = atan(base.g - base.r, base.b - base.r) * 0.1591549 + 0.5;
       hue = fract(hue + uHueShift / 360.0);
       float sat = length(base - vec3(dot(base, vec3(0.299, 0.587, 0.114)))) * uSaturation;
       float val = max(max(base.r, base.g), base.b);
       base = hsv2rgb(vec3(hue, sat, val));
 
-      vec2 pad = vec2(tris(seed * 34.0 + uTime * uSpeed / 10.0), tris(seed * 38.0 + uTime * uSpeed / 30.0)) - 0.5;
+      vec2 pad = vec2(tris(seed * 34.0 + uTime * uSpeed * 0.1), tris(seed * 38.0 + uTime * uSpeed * 0.0333)) - 0.5;
 
       float star = Star(gv - offset - pad, flareSize);
-      vec3 color = base;
 
       float twinkle = trisn(uTime * uSpeed + seed * 6.2831) * 0.5 + 1.0;
       twinkle = mix(1.0, twinkle, uTwinkleIntensity);
       star *= twinkle;
       
-      col += star * size * color;
+      col += star * size * base;
     }
   }
 
@@ -187,6 +183,8 @@ export default function Galaxy({
   rotationSpeed = 0.1,
   autoCenterRepulsion = 0,
   transparent = true,
+  resolutionScale = 1,
+  maxFPS = 0,
   ...rest
 }) {
   const ctnDom = useRef(null);
@@ -194,6 +192,7 @@ export default function Galaxy({
   const smoothMousePos = useRef({ x: 0.5, y: 0.5 });
   const targetMouseActive = useRef(0.0);
   const smoothMouseActive = useRef(0.0);
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     if (!ctnDom.current) return;
@@ -215,8 +214,11 @@ export default function Galaxy({
     let program;
 
     function resize() {
-      const scale = 1;
+      const scale = resolutionScale;
       renderer.setSize(ctn.offsetWidth * scale, ctn.offsetHeight * scale);
+      // stretch the (possibly low-res) canvas back over the container
+      gl.canvas.style.width = '100%';
+      gl.canvas.style.height = '100%';
       if (program) {
         program.uniforms.uResolution.value = new Color(
           gl.canvas.width,
@@ -260,9 +262,14 @@ export default function Galaxy({
 
     const mesh = new Mesh(gl, { geometry, program });
     let animateId;
+    let lastRender = 0;
+    const minFrameInterval = maxFPS > 0 ? 1000 / maxFPS : 0;
 
     function update(t) {
+      if (!isVisibleRef.current) return;
       animateId = requestAnimationFrame(update);
+      if (minFrameInterval && t - lastRender < minFrameInterval) return;
+      lastRender = t;
       if (!disableAnimation) {
         program.uniforms.uTime.value = t * 0.001;
         program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
@@ -283,27 +290,57 @@ export default function Galaxy({
     animateId = requestAnimationFrame(update);
     ctn.appendChild(gl.canvas);
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!isVisibleRef.current) {
+              isVisibleRef.current = true;
+              animateId = requestAnimationFrame(update);
+            }
+          } else {
+            isVisibleRef.current = false;
+            if (animateId) cancelAnimationFrame(animateId);
+          }
+        });
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(ctn);
+
+    let cachedRect = null;
+
     function handleMouseMove(e) {
-      const rect = ctn.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = 1.0 - (e.clientY - rect.top) / rect.height;
+      if (!cachedRect) {
+        cachedRect = ctn.getBoundingClientRect();
+      }
+      const x = (e.clientX - cachedRect.left) / (cachedRect.width || 1);
+      const y = 1.0 - (e.clientY - cachedRect.top) / (cachedRect.height || 1);
       targetMousePos.current = { x, y };
       targetMouseActive.current = 1.0;
     }
 
+    function handleMouseEnter() {
+      cachedRect = ctn.getBoundingClientRect();
+    }
+
     function handleMouseLeave() {
+      cachedRect = null;
       targetMouseActive.current = 0.0;
     }
 
     if (mouseInteraction) {
+      ctn.addEventListener('mouseenter', handleMouseEnter);
       ctn.addEventListener('mousemove', handleMouseMove);
       ctn.addEventListener('mouseleave', handleMouseLeave);
     }
 
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(animateId);
       window.removeEventListener('resize', resize);
       if (mouseInteraction) {
+        ctn.removeEventListener('mouseenter', handleMouseEnter);
         ctn.removeEventListener('mousemove', handleMouseMove);
         ctn.removeEventListener('mouseleave', handleMouseLeave);
       }
@@ -326,7 +363,9 @@ export default function Galaxy({
     rotationSpeed,
     repulsionStrength,
     autoCenterRepulsion,
-    transparent
+    transparent,
+    resolutionScale,
+    maxFPS
   ]);
 
   return <div ref={ctnDom} className="galaxy-container" {...rest} />;

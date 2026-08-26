@@ -1,6 +1,7 @@
 import React from 'react'
 // Aceternity — Timeline
 import { Timeline } from './aceternity/timeline'
+import { CardBody, CardContainer, CardItem } from './aceternity/3d-card'
 
 const internships = [
   {
@@ -21,14 +22,20 @@ function ExperienceSection() {
   const data = internships.map((item) => ({
     title: item.year,
     content: (
-      <div className='panel-surface p-6 md:p-8'>
-        <p className='text-xs font-bold uppercase tracking-[0.2em] text-cyan-300'>Internship</p>
-        <h3 className='mt-3 text-2xl font-bold tracking-tight text-white md:text-4xl'>{item.title}</h3>
-        <p className='mt-2 text-sm text-white/60'>
-          {item.company} - {item.year}
-        </p>
-        <p className='mt-6 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg'>{item.summary}</p>
-      </div>
+      <CardContainer containerClassName='py-0' className='w-full'>
+        <CardBody className='relative h-auto w-full panel-surface p-6 md:p-8 [transform-style:preserve-3d]'>
+          <CardItem translateZ='40' className='w-full'>
+            <p className='text-xs font-bold uppercase tracking-[0.2em] text-cyan-300'>Internship</p>
+            <h3 className='mt-3 text-2xl font-bold tracking-tight text-white md:text-4xl'>{item.title}</h3>
+            <p className='mt-2 text-sm text-white/60'>
+              {item.company} - {item.year}
+            </p>
+          </CardItem>
+          <CardItem translateZ='20' className='mt-6 w-full'>
+            <p className='max-w-2xl text-base leading-relaxed text-white/75 md:text-lg'>{item.summary}</p>
+          </CardItem>
+        </CardBody>
+      </CardContainer>
     ),
   }))
 

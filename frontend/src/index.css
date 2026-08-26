@@ -8,6 +8,9 @@
   --color-accent-cyan: #22d3ee;
   --color-accent-violet: #8b5cf6;
   --color-hairline: rgba(255, 255, 255, 0.12);
+  --color-card: #09090b;
+  --color-card-foreground: #fafafa;
+  --color-border: rgba(255, 255, 255, 0.12);
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
@@ -27,6 +30,14 @@ html {
 body {
   background-color: var(--color-void);
   color: #fff;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
 }
 
 :root {
@@ -57,6 +68,21 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: loader-spin 0.8s linear infinite;
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

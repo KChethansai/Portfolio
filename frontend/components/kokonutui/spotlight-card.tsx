@@ -33,7 +33,7 @@ export function SpotlightCard({
     <motion.div
       ref={cardRef}
       className={cn(
-        "group relative overflow-hidden rounded-[var(--radius-lg)] border border-white/12 bg-white/[0.03]",
+        "group relative overflow-hidden rounded-[var(--radius-lg)] border border-white/12 bg-white/[0.03] cursor-pointer",
         className
       )}
       style={{ rotateX, rotateY, transformPerspective: 900 }}
