@@ -6,12 +6,9 @@ import { cn } from "@/lib/utils";
 export const TracingBeam = ({
   children,
   className,
-}: {
-  children: React.ReactNode;
-  className?: string;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
+  const contentRef = useRef(null);
   const [svgHeight, setSvgHeight] = useState(0);
 
   const y1 = useMotionValue(50);

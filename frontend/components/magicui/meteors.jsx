@@ -2,16 +2,6 @@ import React, { useEffect, useState } from "react"
 
 import { cn } from "@/lib/utils"
 
-interface MeteorsProps {
-  number?: number
-  minDelay?: number
-  maxDelay?: number
-  minDuration?: number
-  maxDuration?: number
-  angle?: number
-  className?: string
-}
-
 export const Meteors = ({
   number = 20,
   minDelay = 0.2,
@@ -20,10 +10,8 @@ export const Meteors = ({
   maxDuration = 10,
   angle = 215,
   className,
-}: MeteorsProps) => {
-  const [meteorStyles, setMeteorStyles] = useState<Array<React.CSSProperties>>(
-    []
-  )
+}) => {
+  const [meteorStyles, setMeteorStyles] = useState([])
 
   useEffect(() => {
     const styles = [...new Array(number)].map(() => ({

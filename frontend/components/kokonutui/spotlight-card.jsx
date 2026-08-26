@@ -8,19 +8,15 @@ import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 const TILT_MAX = 9;
-const TILT_SPRING = { stiffness: 300, damping: 28 } as const;
-const GLOW_SPRING = { stiffness: 180, damping: 22 } as const;
+const TILT_SPRING = { stiffness: 300, damping: 28 };
+const GLOW_SPRING = { stiffness: 180, damping: 22 };
 
 export function SpotlightCard({
   children,
   className,
   color = "#22d3ee",
-}: {
-  children: React.ReactNode;
-  className?: string;
-  color?: string;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef(null);
   const normX = useMotionValue(0.5);
   const normY = useMotionValue(0.5);
   const rawRotateX = useTransform(normY, [0, 1], [TILT_MAX, -TILT_MAX]);

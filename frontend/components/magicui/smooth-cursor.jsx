@@ -1,28 +1,13 @@
-import { useEffect, useRef, useState, type FC } from "react"
+import { useEffect, useRef, useState } from "react"
 import { motion, useSpring } from "motion/react"
-
-interface Position {
-  x: number
-  y: number
-}
-
-export interface SmoothCursorProps {
-  cursor?: React.ReactNode
-  springConfig?: {
-    damping: number
-    stiffness: number
-    mass: number
-    restDelta: number
-  }
-}
 
 const DESKTOP_POINTER_QUERY = "(any-hover: hover) and (any-pointer: fine)"
 
-function isTrackablePointer(pointerType: string) {
+function isTrackablePointer(pointerType) {
   return pointerType !== "touch"
 }
 
-const DefaultCursorSVG: FC = () => {
+const DefaultCursorSVG = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -92,9 +77,9 @@ export function SmoothCursor({
     mass: 1,
     restDelta: 0.001,
   },
-}: SmoothCursorProps) {
-  const lastMousePos = useRef<Position>({ x: 0, y: 0 })
-  const velocity = useRef<Position>({ x: 0, y: 0 })
+}) {
+  const lastMousePos = useRef({ x: 0, y: 0 })
+  const velocity = useRef({ x: 0, y: 0 })
   const lastUpdateTime = useRef(Date.now())
   const previousAngle = useRef(0)
   const accumulatedRotation = useRef(0)
@@ -139,9 +124,9 @@ export function SmoothCursor({
       return
     }
 
-    let timeout: ReturnType<typeof setTimeout> | null = null
+    let timeout = null
 
-    const updateVelocity = (currentPos: Position) => {
+    const updateVelocity = (currentPos) => {
       const currentTime = Date.now()
       const deltaTime = currentTime - lastUpdateTime.current
 
@@ -156,7 +141,7 @@ export function SmoothCursor({
       lastMousePos.current = currentPos
     }
 
-    const smoothPointerMove = (e: PointerEvent) => {
+    const smoothPointerMove = (e) => {
       if (!isTrackablePointer(e.pointerType)) {
         return
       }
@@ -198,7 +183,7 @@ export function SmoothCursor({
     }
 
     let rafId = 0
-    const throttledPointerMove = (e: PointerEvent) => {
+    const throttledPointerMove = (e) => {
       if (!isTrackablePointer(e.pointerType)) {
         return
       }

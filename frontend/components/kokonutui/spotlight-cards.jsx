@@ -8,7 +8,6 @@
  * @github https://github.com/kokonut-labs/kokonutui
  */
 
-import type { LucideIcon } from "lucide-react";
 import { Cloud, Code, Cpu, Globe, Lock, Zap } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { useRef, useState } from "react";
@@ -17,19 +16,12 @@ import { cn } from "@/lib/utils";
 // ─── Constants ──────────────────────────────────────────────────────────────────
 
 const TILT_MAX = 9;
-const TILT_SPRING = { stiffness: 300, damping: 28 } as const;
-const GLOW_SPRING = { stiffness: 180, damping: 22 } as const;
+const TILT_SPRING = { stiffness: 300, damping: 28 };
+const GLOW_SPRING = { stiffness: 180, damping: 22 };
 
 // ─── Data ────────────────────────────────────────────────────────────────────────
 
-export interface SpotlightItem {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  color: string;
-}
-
-const DEFAULT_ITEMS: SpotlightItem[] = [
+const DEFAULT_ITEMS = [
   {
     icon: Zap,
     title: "Instant",
@@ -76,16 +68,9 @@ const DEFAULT_ITEMS: SpotlightItem[] = [
 
 // ─── Card ────────────────────────────────────────────────────────────────────────
 
-interface CardProps {
-  item: SpotlightItem;
-  dimmed: boolean;
-  onHoverStart: () => void;
-  onHoverEnd: () => void;
-}
-
-function Card({ item, dimmed, onHoverStart, onHoverEnd }: CardProps) {
+function Card({ item, dimmed, onHoverStart, onHoverEnd }) {
   const Icon = item.icon;
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef(null);
 
   const normX = useMotionValue(0.5);
   const normY = useMotionValue(0.5);
@@ -97,7 +82,7 @@ function Card({ item, dimmed, onHoverStart, onHoverEnd }: CardProps) {
   const rotateY = useSpring(rawRotateY, TILT_SPRING);
   const glowOpacity = useSpring(0, GLOW_SPRING);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e) => {
     const el = cardRef.current;
     if (!el) {
       return;
@@ -207,20 +192,13 @@ Card.displayName = "Card";
 
 // ─── Main export ──────────────────────────────────────────────────────────────────
 
-export interface SpotlightCardsProps {
-  items?: SpotlightItem[];
-  eyebrow?: string;
-  heading?: string;
-  className?: string;
-}
-
 export default function SpotlightCards({
   items = DEFAULT_ITEMS,
   eyebrow = "Features",
   heading = "Everything you need",
   className,
-}: SpotlightCardsProps) {
-  const [hoveredTitle, setHoveredTitle] = useState<string | null>(null);
+}) {
+  const [hoveredTitle, setHoveredTitle] = useState(null);
 
   return (
     <div
