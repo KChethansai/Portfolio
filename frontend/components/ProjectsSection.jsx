@@ -33,7 +33,7 @@ function FlagshipProject({ item }) {
             </h3>
             <p className='mt-2 text-sm text-[var(--color-ink-muted)]'>{item.year}</p>
 
-            <p className='mt-5 max-w-2xl text-[0.9rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+            <p className='mt-5 max-w-2xl text-[0.95rem] leading-[1.7] text-[var(--color-ink-body)]'>
               {item.summary}
             </p>
 
@@ -61,9 +61,7 @@ function FlagshipProject({ item }) {
 function ProjectCard({ item }) {
   return (
     <Reveal>
-      <article className='group'>
-        <div className='editorial-rule mb-6' />
-
+      <article className='group rounded-md border border-white/[0.04] bg-white/[0.015] p-5 transition-all duration-300 hover:border-[var(--color-accent)]/15 hover:bg-white/[0.025]'>
         <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-muted)]'>
           Project
         </p>
@@ -72,7 +70,7 @@ function ProjectCard({ item }) {
         </h3>
         <p className='mt-1 text-sm text-[var(--color-ink-muted)]'>{item.year}</p>
 
-        <p className='mt-3 max-w-xl text-[0.85rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+        <p className='mt-3 max-w-xl text-[0.9rem] leading-[1.7] text-[var(--color-ink-body)]'>
           {item.summary}
         </p>
 
@@ -87,7 +85,7 @@ export default function ProjectsSection() {
   const siblings = projects.filter((p) => !p.flagship)
 
   return (
-    <section id='projects' className='relative scroll-mt-24 px-6 py-16 md:py-28'>
+    <section id='projects' className='relative scroll-mt-24 px-6 py-16 md:py-28 section-glow'>
       <div className='mx-auto max-w-[1400px]'>
         <SectionHeading index='03' kicker='Selected Work' title={<>Ideas into impact.</>} />
 

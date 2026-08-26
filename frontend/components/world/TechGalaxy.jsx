@@ -4,13 +4,25 @@ import * as THREE from 'three'
 import { techOrbit, groupColors } from '@/lib/data'
 import { world, starPointer } from './WorldState'
 
-// Technology constellation — atmospheric information visualization.
-// Very subtle in default state; brightens only on hover and skills focus.
 const RINGS = [
   { radius: 2.35, tilt: [0.42, 0, 0.1], speed: 0.08 },
   { radius: 3.05, tilt: [-0.3, 0, -0.16], speed: -0.055 },
   { radius: 3.7, tilt: [0.12, 0, 0.22], speed: 0.04 },
 ]
+
+// Pre-build per-group shared materials to avoid per-node material creation
+const groupMaterials = {}
+for (const [group, color] of Object.entries(groupColors)) {
+  groupMaterials[group] = new THREE.MeshStandardMaterial({
+    color,
+    emissive: color,
+    emissiveIntensity: 1.2,
+    transparent: true,
+    fog: false,
+    toneMapped: false,
+    opacity: 0.6,
+  })
+}
 
 const labelTextureCache = new Map()
 function getLabelTexture(label) {
@@ -28,10 +40,35 @@ function getLabelTexture(label) {
   ctx.fillText(label, 128, 34)
   const texture = new THREE.CanvasTexture(canvas)
   texture.colorSpace = THREE.SRGBColorSpace
-  texture.anisotropy = 2
   labelTextureCache.set(label, texture)
   return texture
 }
+
+let haloTex = null
+function haloTexture() {
+  if (haloTex) return haloTex
+  const c = document.createElement('canvas')
+  c.width = c.height = 64
+  const ctx = c.getContext('2d')
+  const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32)
+  grad.addColorStop(0, 'rgba(255,255,255,0.35)')
+  grad.addColorStop(0.4, 'rgba(255,255,255,0.08)')
+  grad.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, 64, 64)
+  haloTex = new THREE.CanvasTexture(c)
+  return haloTex
+}
+
+const haloMat = new THREE.SpriteMaterial({
+  map: null, // set lazily
+  transparent: true,
+  opacity: 0.25,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+})
+// Lazy init the map after haloTexture is available
+setTimeout(() => { haloMat.map = haloTexture() }, 0)
 
 export default function TechGalaxy({ reducedMotion = false }) {
   const group = useRef(null)
@@ -59,6 +96,7 @@ export default function TechGalaxy({ reducedMotion = false }) {
   }
 
   const cur = useMemo(() => ({ rx: 0, ry: 0, emphasis: 0 }), [])
+
   useFrame(({ clock }, dt) => {
     const g = group.current
     if (!g) return
@@ -84,28 +122,37 @@ export default function TechGalaxy({ reducedMotion = false }) {
     const e = cur.emphasis
     g.visible = e > 0.03
 
-    ringRefs.forEach((ref, i) => {
-      const r = ref.current
-      if (!r) return
+    // Ring rotation — only update visible rings
+    for (let i = 0; i < 3; i++) {
+      const r = ringRefs[i].current
+      if (!r) continue
       if (!reducedMotion) {
         const spin = RINGS[i].speed * dt * (0.3 + e * 0.7)
         r.children.forEach((child) => {
           if (child.userData.angle !== undefined) {
             child.userData.angle += spin
-            const { radius } = RINGS[i]
-            child.position.set(Math.cos(child.userData.angle) * radius, 0, Math.sin(child.userData.angle) * radius)
+            const radius = RINGS[i].radius
+            child.position.set(
+              Math.cos(child.userData.angle) * radius,
+              0,
+              Math.sin(child.userData.angle) * radius
+            )
           }
         })
       }
       r.rotation.y = t * (reducedMotion ? 0 : RINGS[i].speed * 0.12)
-    })
+    }
 
+    // Node updates — batch by hover state
+    const isHovering = hoveredLabel.current != null
     for (const [label, n] of Object.entries(nodeRefs.current)) {
       if (!n) continue
       const isHovered = hoveredLabel.current === label
       const base = 0.7 + Math.sin(t * 1.2 + label.length) * 0.06
       const targetScale = (isHovered ? 1.5 : base * 0.6) * (0.4 + e * 0.5)
       n.scale.setScalar(THREE.MathUtils.lerp(n.scale.x, targetScale, k))
+      // Update shared material opacity via per-node material clone on first hover,
+      // otherwise batch update
       n.children[1].material.opacity = Math.min(0.8, 0.15 + e * 0.9)
       n.children[2].material.opacity = Math.min(0.3, e * 0.35) * (isHovered ? 2 : 1)
       n.children[3].material.opacity = Math.min(0.6, 0.1 + e * 0.7) * (isHovered ? 1.8 : 1)
@@ -125,10 +172,9 @@ export default function TechGalaxy({ reducedMotion = false }) {
     <group ref={group}>
       {byRing.map((nodes, ri) => (
         <group key={ri} ref={ringRefs[ri]} rotation={RINGS[ri].tilt}>
-          {/* orbit guide line — barely visible */}
           <mesh raycast={() => null} rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[RINGS[ri].radius, 0.004, 6, 128]} />
-            <meshBasicMaterial color="#67e8f9" transparent opacity={0.04} depthWrite={false} />
+            <torusGeometry args={[RINGS[ri].radius, 0.004, 4, 64]} />
+            <meshBasicMaterial color='#67e8f9' transparent opacity={0.035} depthWrite={false} />
           </mesh>
           {nodes.map((tech) => (
             <TechNode
@@ -155,7 +201,7 @@ function TechNode({ tech, ring, registerRef, onOver, onOut }) {
   }, [tech.angle, ring.radius])
 
   const tex = useMemo(() => getLabelTexture(tech.label), [tech.label])
-  const color = groupColors[tech.group] ?? '#67e8f9'
+  const mat = groupMaterials[tech.group] || groupMaterials['Tools']
 
   return (
     <group
@@ -169,31 +215,24 @@ function TechNode({ tech, ring, registerRef, onOver, onOut }) {
       onPointerOut={onOut}
     >
       <mesh>
-        <sphereGeometry args={[0.22, 8, 8]} />
+        <sphereGeometry args={[0.22, 6, 6]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <mesh raycast={() => null}>
-        <sphereGeometry args={[0.06, 12, 12]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={1.4}
-          transparent
-          fog={false}
-          toneMapped={false}
-        />
+        <sphereGeometry args={[0.06, 8, 8]} />
+        <primitive object={mat} attach='material' />
       </mesh>
       <sprite scale={[0.28, 0.28, 1]} raycast={() => null}>
         <spriteMaterial
           map={haloTexture()}
           transparent
-          opacity={0.3}
+          opacity={0.25}
           depthWrite={false}
           blending={THREE.AdditiveBlending}
         />
       </sprite>
       <sprite position={[0, 0.22, 0]} scale={[0.5, 0.125, 1]} raycast={() => null}>
-        <spriteMaterial map={tex} transparent opacity={0.65} depthWrite={false} fog={false} />
+        <spriteMaterial map={tex} transparent opacity={0.6} depthWrite={false} fog={false} />
       </sprite>
     </group>
   )
@@ -202,20 +241,4 @@ function TechNode({ tech, ring, registerRef, onOver, onOut }) {
 function smoothstep(x, edge0, edge1) {
   const t = Math.min(Math.max((x - edge0) / (edge1 - edge0), 0), 1)
   return t * t * (3 - 2 * t)
-}
-
-let haloTex = null
-function haloTexture() {
-  if (haloTex) return haloTex
-  const c = document.createElement('canvas')
-  c.width = c.height = 64
-  const ctx = c.getContext('2d')
-  const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32)
-  grad.addColorStop(0, 'rgba(255,255,255,0.4)')
-  grad.addColorStop(0.4, 'rgba(255,255,255,0.1)')
-  grad.addColorStop(1, 'rgba(255,255,255,0)')
-  ctx.fillStyle = grad
-  ctx.fillRect(0, 0, 64, 64)
-  haloTex = new THREE.CanvasTexture(c)
-  return haloTex
 }

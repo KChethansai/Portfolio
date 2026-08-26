@@ -11,7 +11,7 @@ export default function TerminalSection() {
             <span className='h-px w-6 bg-white/10' aria-hidden />
             Shell
           </p>
-          <h2 className='mt-4 text-[clamp(1.75rem,4vw,3rem)] font-bold tracking-tight leading-[1.1] text-white'>
+          <h2 className='mt-4 text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-tight leading-[1.08] text-white'>
             The person
             <br />
             behind the

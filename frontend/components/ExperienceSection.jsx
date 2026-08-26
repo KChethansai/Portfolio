@@ -3,7 +3,7 @@ import { experience } from '@/lib/data'
 
 export default function ExperienceSection() {
   return (
-    <section id='experience' className='relative scroll-mt-24 py-16 md:py-28'>
+    <section id='experience' className='relative scroll-mt-24 py-16 md:py-28 section-tint-1'>
       <div className='mx-auto max-w-[1400px] px-6'>
         <SectionHeading index='02' kicker='Experience' title={<>Learn by doing.</>} />
 
@@ -16,7 +16,7 @@ export default function ExperienceSection() {
               <Reveal key={item.title} delay={i * 0.08}>
                 <div className='relative pl-8'>
                   {/* Timeline dot */}
-                  <div className='absolute left-0 top-2 h-[15px] w-[15px] rounded-full border-2 border-[var(--color-accent)]/40 bg-[var(--color-void)]' />
+                  <div className='absolute left-0 top-2 h-[15px] w-[15px] rounded-full border-2 border-[var(--color-accent)]/50 bg-[var(--color-void)] shadow-[0_0_8px_rgba(34,211,238,0.15)]' />
 
                   <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-muted)]'>
                     {item.year}
@@ -30,7 +30,7 @@ export default function ExperienceSection() {
                     {item.company}
                   </p>
 
-                  <p className='mt-4 max-w-2xl text-[0.9rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+                  <p className='mt-4 max-w-2xl text-[0.95rem] leading-[1.7] text-[var(--color-ink-body)]'>
                     {item.summary}
                   </p>
                 </div>

@@ -48,7 +48,7 @@ function EduBlock({ edu }) {
 
 export default function SkillsSection() {
   return (
-    <section id='skills' className='relative scroll-mt-24 px-6 py-16 md:py-28'>
+    <section id='skills' className='relative scroll-mt-24 px-6 py-16 md:py-28 section-tint-2'>
       <div className='mx-auto max-w-[1400px]'>
         {/* Technology */}
         <SectionHeading
@@ -76,7 +76,7 @@ export default function SkillsSection() {
               <h3 className='text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)]/80'>
                 AI &amp; Data
               </h3>
-              <p className='mt-3 text-[0.85rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+              <p className='mt-3 text-[0.9rem] leading-[1.7] text-[var(--color-ink-body)]'>
                 Building ML-powered tools including a disease prediction model covering 150+
                 diseases with XGBoost and Gradient Boosting, plus cloud analytics with BigQuery.
               </p>
@@ -87,7 +87,7 @@ export default function SkillsSection() {
               <h3 className='text-[11px] font-bold uppercase tracking-[0.2em] text-violet-400/80'>
                 Full Stack
               </h3>
-              <p className='mt-3 text-[0.85rem] leading-[1.7] text-[var(--color-ink-secondary)]'>
+              <p className='mt-3 text-[0.9rem] leading-[1.7] text-[var(--color-ink-body)]'>
                 Building full-stack MERN applications — including real-time collaborative systems
                 and a paper trading platform with live market data.
               </p>

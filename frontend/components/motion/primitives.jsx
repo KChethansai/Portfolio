@@ -31,7 +31,7 @@ export function SectionHeading({ index, kicker, title }) {
       </Reveal>
       {title ? (
         <Reveal delay={0.06}>
-          <h2 className='mt-4 max-w-3xl text-[clamp(1.75rem,4vw,3rem)] font-bold tracking-tight leading-[1.1] text-white'>
+          <h2 className='mt-4 max-w-3xl text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-tight leading-[1.08] text-white'>
             {title}
           </h2>
         </Reveal>

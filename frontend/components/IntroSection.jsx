@@ -22,7 +22,7 @@ export default function IntroSection() {
         <div className='lg:col-span-7'>
           <SectionHeading index='01' kicker='Introduction' title={null} />
           <Reveal delay={0.08}>
-            <h2 className='text-[clamp(3rem,9vw,8rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-white [text-wrap:balance]'>
+            <h2 className='text-[clamp(3.5rem,10vw,9rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-white [text-wrap:balance]'>
               Build.
               <br />
               Ship.
@@ -31,7 +31,7 @@ export default function IntroSection() {
             </h2>
           </Reveal>
           <Reveal delay={0.15}>
-            <p className='mt-8 max-w-[48ch] text-[clamp(0.95rem,1.8vw,1.25rem)] leading-[1.7] text-[var(--color-ink-secondary)]'>
+            <p className='mt-8 max-w-[48ch] text-[clamp(1rem,2vw,1.35rem)] leading-[1.7] text-[var(--color-ink-body)]'>
               A story of internships and projects built across data science, machine
               learning, and full-stack development.
             </p>

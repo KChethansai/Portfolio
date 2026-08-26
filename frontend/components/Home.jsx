@@ -52,7 +52,7 @@ export default function Home() {
 
           <motion.h1
             {...rise(0.12)}
-            className='text-[clamp(2.8rem,7.5vw,5.8rem)] font-black leading-[0.92] tracking-[-0.03em] text-white'
+            className='text-[clamp(3.2rem,8.5vw,7rem)] font-black leading-[0.9] tracking-[-0.035em] text-white'
           >
             {profile.name.split(' ').map((word, i) => (
               <span key={i} className='block'>
@@ -74,7 +74,7 @@ export default function Home() {
 
           <motion.p
             {...rise(0.4)}
-            className='mt-7 max-w-[52ch] text-[0.95rem] leading-[1.7] text-[var(--color-ink-secondary)]'
+            className='mt-7 max-w-[52ch] text-[1.05rem] leading-[1.7] text-[var(--color-ink-secondary)]'
           >
             {profile.tagline.split('Anurag University, Hyderabad')[0]}
             <span className='font-medium text-[var(--color-ink)]'>Anurag University, Hyderabad</span>
@@ -126,18 +126,24 @@ export default function Home() {
   )
 }
 
-// DOM-side tooltip for 3D hover state — zero React renders.
+// DOM-side tooltip — synced via rAF but only when hover state exists.
 function HoverTooltip() {
   const ref = useRef(null)
   useEffect(() => {
     let raf
+    let lastLabel = null
     const tick = () => {
       const el = ref.current
       if (el) {
-        const show = world.hoverLabel != null
-        el.style.opacity = show ? '1' : '0'
-        el.style.transform = `translate(${world.hoverX}px, ${world.hoverY}px) translate(-50%,-100%)`
-        el.textContent = show ? world.hoverLabel : ''
+        const label = world.hoverLabel
+        if (label !== lastLabel) {
+          lastLabel = label
+          el.style.opacity = label ? '1' : '0'
+          el.textContent = label || ''
+        }
+        if (label) {
+          el.style.transform = `translate(${world.hoverX}px, ${world.hoverY}px) translate(-50%,-100%)`
+        }
       }
       raf = requestAnimationFrame(tick)
     }
