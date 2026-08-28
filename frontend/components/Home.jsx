@@ -52,7 +52,7 @@ export default function Home() {
 
           <motion.h1
             {...rise(0.12)}
-            className='text-[clamp(3.2rem,8.5vw,7rem)] font-black leading-[0.9] tracking-[-0.035em] text-white'
+            className='font-display text-[clamp(3.4rem,8.5vw,7.25rem)] font-bold leading-[0.84] tracking-[-0.065em] text-white [text-wrap:balance]'
           >
             {profile.name.split(' ').map((word, i) => (
               <span key={i} className='block'>
@@ -85,7 +85,7 @@ export default function Home() {
             <Magnetic>
               <button
                 onClick={scrollToIntro}
-                className='rounded-full bg-white px-7 py-3 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/50'
+                className='rounded-full bg-white px-7 py-3 text-sm font-semibold text-black transition-colors duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/50'
               >
                 View Work
               </button>
@@ -108,7 +108,7 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
+          transition={{ delay: 1.2, duration: 0.8, ease: ease.out }}
           className='absolute bottom-8 left-1/2 -translate-x-1/2'
         >
           <ScrollIndicator />
@@ -126,27 +126,36 @@ export default function Home() {
   )
 }
 
-// DOM-side tooltip — synced via rAF but only when hover state exists.
+// DOM-side tooltip — follows the 3D hover target. The rAF loop reads mutable
+// world state; it only writes styles while a label is active.
 function HoverTooltip() {
   const ref = useRef(null)
+
   useEffect(() => {
     let raf
     let lastLabel = null
+
     const tick = () => {
       const el = ref.current
-      if (el) {
-        const label = world.hoverLabel
-        if (label !== lastLabel) {
-          lastLabel = label
-          el.style.opacity = label ? '1' : '0'
-          el.textContent = label || ''
-        }
-        if (label) {
-          el.style.transform = `translate(${world.hoverX}px, ${world.hoverY}px) translate(-50%,-100%)`
-        }
+      if (!el) return
+
+      const label = world.hoverLabel
+      const x = world.hoverX
+      const y = world.hoverY
+
+      if (label !== lastLabel) {
+        lastLabel = label
+        el.style.opacity = label ? '1' : '0'
+        el.textContent = label || ''
       }
+
+      if (label) {
+        el.style.transform = `translate(${x}px, ${y}px) translate(-50%,-100%)`
+      }
+
       raf = requestAnimationFrame(tick)
     }
+
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [])

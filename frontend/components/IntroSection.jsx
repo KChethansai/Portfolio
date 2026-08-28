@@ -22,7 +22,7 @@ export default function IntroSection() {
         <div className='lg:col-span-7'>
           <SectionHeading index='01' kicker='Introduction' title={null} />
           <Reveal delay={0.08}>
-            <h2 className='text-[clamp(3.5rem,10vw,9rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-white [text-wrap:balance]'>
+            <h2 className='text-[clamp(3.5rem,10vw,9.5rem)] font-bold uppercase leading-[0.82] tracking-[-0.05em] text-white [text-wrap:balance]'>
               Build.
               <br />
               Ship.

@@ -56,7 +56,7 @@ function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
         scrolled
           ? 'bg-[#050608]/80 backdrop-blur-md border-b border-white/[0.04]'
           : 'bg-transparent'

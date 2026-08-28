@@ -1,7 +1,8 @@
 // Central motion language. Every animation in the site reads from here.
+// Premium editorial curve — fast snap, slow settle. Distinctive, not default.
 export const ease = {
-  out: [0.22, 1, 0.36, 1],
-  inOut: [0.65, 0, 0.35, 1],
+  out: [0.16, 1, 0.3, 1], // snap out
+  inOut: [0.16, 1, 0.3, 1],
 }
 
 export const duration = {

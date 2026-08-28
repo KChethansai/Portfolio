@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   /* Design tokens — editorial dark system */
@@ -21,7 +22,7 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
-  --ease-portfolio: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-portfolio: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html,
@@ -39,6 +40,14 @@ html {
 body {
   background-color: var(--color-void);
   color: var(--color-ink);
+  background: linear-gradient(
+    180deg,
+    var(--color-void) 0%,
+    rgba(34, 211, 238, 0.008) 25%,
+    rgba(139, 92, 246, 0.006) 50%,
+    rgba(34, 211, 238, 0.008) 75%,
+    var(--color-void) 100%
+  );
 }
 
 @layer base {
@@ -49,12 +58,16 @@ body {
   }
 }
 
+.font-display {
+  font-family: var(--font-display);
+}
+
 :root {
   --bg-void: #050608;
   --accent: #22d3ee;
   --accent-muted: rgba(34, 211, 238, 0.12);
   --border-hairline: 1px solid rgba(255, 255, 255, 0.08);
-  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-duration: 0.45s;
 }
 

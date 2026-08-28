@@ -36,7 +36,7 @@ export default function SiteFooter() {
       <div className='relative z-10 mx-auto max-w-[1400px]'>
         <Reveal>
           <p className='section-label text-center'>End of transmission</p>
-          <h2 className='mt-6 text-center text-[clamp(2.4rem,7vw,6rem)] font-black leading-[0.92] tracking-[-0.03em] text-white [text-wrap:balance]'>
+          <h2 className='mt-6 text-center text-[clamp(2.4rem,7vw,6rem)] font-bold leading-[0.88] tracking-[-0.05em] text-white [text-wrap:balance]'>
             Let's build
             <br />
             <span className='accent-text'>something.</span>
@@ -48,7 +48,7 @@ export default function SiteFooter() {
             <Magnetic strength={0.3}>
               <a
                 href={`mailto:${profile.email}`}
-                className='rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]'
+                className='rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-black transition-colors duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]'
               >
                 Start a conversation
               </a>

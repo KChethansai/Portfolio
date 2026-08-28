@@ -31,7 +31,7 @@ export function SectionHeading({ index, kicker, title }) {
       </Reveal>
       {title ? (
         <Reveal delay={0.06}>
-          <h2 className='mt-4 max-w-3xl text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-tight leading-[1.08] text-white'>
+          <h2 className='mt-4 max-w-3xl text-[clamp(2.5rem,5.5vw,4.5rem)] font-bold tracking-[-0.04em] leading-[1.0] text-white'>
             {title}
           </h2>
         </Reveal>
@@ -40,7 +40,7 @@ export function SectionHeading({ index, kicker, title }) {
   )
 }
 
-// Magnetic hover — subtle lean toward cursor.
+// Magnetic hover — subtle lean toward cursor (no-op on touch).
 export function Magnetic({ children, strength = 0.2, className = '' }) {
   const ref = useRef(null)
   const x = useMotionValue(0)
@@ -57,6 +57,12 @@ export function Magnetic({ children, strength = 0.2, className = '' }) {
   const reset = () => {
     x.set(0)
     y.set(0)
+  }
+
+  // Skip magnetic on touch/coarse pointers
+  const isTouchDevice = typeof window !== 'undefined' && (window.matchMedia?.('(hover: none)').matches || window.matchMedia?.('(pointer: coarse)').matches)
+  if (isTouchDevice) {
+    return <div className={`inline-block ${className}`}>{children}</div>
   }
 
   return (

@@ -1,6 +1,7 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { profile } from '@/lib/data'
+import { ease } from '@/lib/motion'
 
 export default function Preloader({ ready, onDone }) {
   const [count, setCount] = useState(0)
@@ -42,7 +43,7 @@ export default function Preloader({ ready, onDone }) {
       className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050608]'
       initial={{ opacity: 1 }}
       animate={leaving ? { opacity: 0 } : { opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, ease: ease.out }}
       aria-label='Loading portfolio'
     >
       <p className='section-label text-[var(--color-accent)]/70'>
@@ -54,8 +55,8 @@ export default function Preloader({ ready, onDone }) {
 
       <div className='mt-8 h-px w-40 overflow-hidden bg-white/[0.06]'>
         <div
-          className='h-full bg-white/40 transition-[width] duration-150 ease-out'
-          style={{ width: `${Math.round(count)}%` }}
+          className='h-full w-full bg-white/40 transition-transform duration-150 ease-out origin-left'
+          style={{ transform: `scaleX(${Math.max(count / 100, 0.01)})` }}
         />
       </div>
       <p className='mt-3 text-[10px] tabular-nums uppercase tracking-[0.25em] text-[var(--color-ink-faint)]'>

@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { ease } from '@/lib/motion'
 
 function ScrollIndicator() {
   return (
@@ -6,7 +7,7 @@ function ScrollIndicator() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.6 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      transition={{ duration: 0.8, ease: ease.out }}
       className='relative w-full flex flex-col items-center justify-center select-none'
     >
       <p className='text-[10px] tracking-[0.35em] font-medium text-[var(--color-ink-muted)]'>
@@ -22,7 +23,7 @@ function ScrollIndicator() {
           animate={{ y: ['-100%', '100%'] }}
           transition={{
             duration: 1.8,
-            ease: 'easeInOut',
+            ease: ease.inOut,
             repeat: Infinity,
             repeatType: 'loop',
           }}
