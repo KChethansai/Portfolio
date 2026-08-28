@@ -3,7 +3,7 @@ export const profile = {
   name: 'Chethan Sai Kakunuri',
   roles: ['Full Stack Developer', 'Data Science Student'],
   tagline:
-    'Computer Science (Data Science) student at Anurag University, Hyderabad with hands-on experience building full-stack MERN applications and ML-powered tools.',
+    'Computer Science (Data Science) student at Anurag University, Hyderabad with hands-on experience building full-stack MERN applications and ML-powered tools — real-time collaborative systems, a paper trading platform with live market data, and a disease prediction model spanning 150+ conditions, shipping projects from idea to deployment.',
   email: 'kakunurichethansai@gmail.com',
   github: 'https://github.com/KChethansai',
   linkedin: 'https://www.linkedin.com/in/kakunuri-chethan-sai-130a503b5',
@@ -35,7 +35,7 @@ export const projects = [
   },
   {
     title: 'Kanvora — Collaborative Project Board',
-    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.IO', 'react-beautiful-dnd'],
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.IO', 'dnd-kit'],
     year: 'Apr 2026 – Jun 2026',
     summary:
       'Trello-style project management app with real-time collaboration using Socket.IO. Drag-and-drop cards and columns with concurrent-edit race-condition handling. USER / AUTHOR / ADMIN role-based access control.',
@@ -48,7 +48,7 @@ export const experience = [
     company: 'Suntek IT Solutions',
     year: 'Feb 2026 – Apr 2026',
     summary:
-      'Completed a 10-week structured training program in JavaScript, Node.js, Express, and full-stack MERN development alongside DSA. Shipped a full-stack blog application with end-to-end deployment on Vercel, Render, and MongoDB Atlas. Delivered two production-grade MERN applications independently.',
+      'Completed MERN training (JavaScript, Node.js, Express, full-stack development) spanning 20 training days across 2–3 sessions a week, graded A with 99.4%. Built a full-stack blog application deployed end-to-end on Vercel, Render, and MongoDB Atlas. Delivered two production-grade MERN applications — MarketForge (individual) and Kanvora (group) — serving as Lead Developer.',
   },
   {
     title: 'Virtual Intern',
@@ -70,7 +70,7 @@ export const skillGroups = [
   {
     title: 'Tools',
     color: '#f59e0b',
-    items: ['Git', 'GitHub', 'GitHub Actions', 'GitLab', 'Postman', 'Excel', 'Godot', 'Linux', 'JavaScript', 'C', 'C++', 'Java'],
+    items: ['Git', 'GitHub', 'GitHub Actions', 'GitLab', 'Postman', 'Excel', 'Godot', 'Linux', 'Docker', 'JavaScript', 'C', 'C++', 'C#', 'Java'],
   },
 ]
 
