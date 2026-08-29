@@ -108,10 +108,16 @@ export default function SkillsSection() {
           <div className='mt-10'>
             <p className='section-label mb-4'>Certifications</p>
             <div className='flex flex-wrap gap-x-6 gap-y-2'>
-              {certifications.map((title) => (
-                <span key={title} className='text-[13px] text-[var(--color-ink-secondary)]'>
-                  {title}
-                </span>
+              {certifications.map((cert) => (
+                <a
+                  key={cert.title}
+                  href={cert.url}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='text-[13px] text-[var(--color-ink-secondary)] transition-colors hover:text-[var(--color-accent)]'
+                >
+                  {cert.title} ↗
+                </a>
               ))}
             </div>
           </div>

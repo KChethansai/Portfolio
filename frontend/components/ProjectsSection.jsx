@@ -3,6 +3,24 @@ import { Reveal, SectionHeading } from './motion/primitives'
 import { NumberTicker } from './magicui/number-ticker'
 import { projects } from '@/lib/data'
 
+function ProjectLinks({ item }) {
+  if (!item.github && !item.website) return null
+  return (
+    <div className='mt-4 flex items-center gap-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-ink-muted)]'>
+      {item.github && (
+        <a href={item.github} target='_blank' rel='noreferrer' className='transition-colors hover:text-[var(--color-accent)]'>
+          GitHub ↗
+        </a>
+      )}
+      {item.website && (
+        <a href={item.website} target='_blank' rel='noreferrer' className='transition-colors hover:text-[var(--color-accent)]'>
+          Website ↗
+        </a>
+      )}
+    </div>
+  )
+}
+
 function TechList({ tech }) {
   return (
     <ul className='mt-4 flex flex-wrap gap-2'>
@@ -37,6 +55,8 @@ function FlagshipProject({ item }) {
             <p className='mt-5 max-w-2xl text-[0.95rem] leading-[1.7] text-[var(--color-ink-body)]'>
               {item.summary}
             </p>
+
+            <ProjectLinks item={item} />
 
             <TechList tech={item.tech} />
           </div>
@@ -106,6 +126,8 @@ function ProjectCard({ item, index = 0 }) {
           <p className='mt-3 max-w-xl text-[0.9rem] leading-[1.7] text-[var(--color-ink-body)]'>
             {item.summary}
           </p>
+
+          <ProjectLinks item={item} />
 
           <TechList tech={item.tech} />
         </div>
