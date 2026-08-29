@@ -29,7 +29,7 @@ export default function TerminalSection() {
               B.Tech CSE (Data Science) — Anurag University, Hyderabad
             </AnimatedSpan>
             <TypingAnimation className='text-[var(--color-accent)]'>$ echo $CGPA</TypingAnimation>
-            <AnimatedSpan className='text-white/75'>8.87</AnimatedSpan>
+            <AnimatedSpan className='text-white/75'>8.91</AnimatedSpan>
             <TypingAnimation className='text-[var(--color-accent)]'>$ ls projects/</TypingAnimation>
             <AnimatedSpan className='text-white/75'>
               MarketForge  AI-Health-Prediction  Kanvora

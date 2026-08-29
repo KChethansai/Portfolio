@@ -1,6 +1,5 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
 import { starPointer } from './WorldState'
 
 // Lightweight starfield using Three.js Points.

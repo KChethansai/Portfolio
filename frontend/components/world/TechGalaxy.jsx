@@ -144,7 +144,6 @@ export default function TechGalaxy({ reducedMotion = false }) {
     }
 
     // Node updates — batch by hover state
-    const isHovering = hoveredLabel.current != null
     for (const [label, n] of Object.entries(nodeRefs.current)) {
       if (!n) continue
       const isHovered = hoveredLabel.current === label

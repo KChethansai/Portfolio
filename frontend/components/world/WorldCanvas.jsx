@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import Starfield from './Starfield'
@@ -80,7 +80,7 @@ export default function WorldCanvas({ onReady }) {
           // Power-efficient: don't preserve drawing buffer
           preserveDrawingBuffer: false,
         }}
-        onCreated={({ gl, scene, camera }) => {
+        onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping
           gl.toneMappingExposure = 1.0
           gl.setClearColor('#050608', 1)

@@ -1,0 +1,10 @@
+- generic "Loading portfolio" [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - paragraph [ref=e5]:
+        - text: chethan@portfolio:~$
+        - generic [ref=e6]: ▌
+      - paragraph [ref=e8]:
+        - text: $
+        - generic [ref=e9]: ▌
+    - paragraph [ref=e11]: "000"

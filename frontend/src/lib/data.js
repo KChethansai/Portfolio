@@ -11,7 +11,7 @@ export const profile = {
 }
 
 export const stats = [
-  { label: 'CGPA', value: 8.87, decimals: 2 },
+  { label: 'CGPA', value: 8.91, decimals: 2 },
   { label: 'Projects', value: 3, decimals: 0 },
   { label: 'Internships', value: 2, decimals: 0 },
 ]
@@ -75,7 +75,7 @@ export const skillGroups = [
 ]
 
 export const education = [
-  { title: 'B.Tech CSE (Data Science)', place: 'Anurag University', year: '2024 - 2028', status: 'ongoing', detail: 'CGPA 8.87' },
+  { title: 'B.Tech CSE (Data Science)', place: 'Anurag University', year: '2024 - 2028', status: 'ongoing', detail: 'CGPA ' },
   { title: 'Intermediate', place: 'Sri Chaitanya Jr Kalasala', year: '2024', status: 'completed', detail: '93.3%' },
   { title: 'Secondary School', place: 'Sri Chaitanya Techno School', year: '2022', status: 'completed', detail: '9.7' },
 ]

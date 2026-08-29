@@ -27,7 +27,5 @@ function computeTier() {
 }
 
 export function useDeviceCapability() {
-  const [tier, setTier] = useState(() => (typeof window === 'undefined' ? 'mid' : computeTier()))
-  useEffect(() => setTier(computeTier()), [])
-  return tier
+  return useState(() => (typeof window === 'undefined' ? 'mid' : computeTier()))[0]
 }
