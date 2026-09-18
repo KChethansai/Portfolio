@@ -80,12 +80,6 @@ export const skillGroups = [
   },
 ]
 
-export const education = [
-  { title: 'B.Tech CSE (Data Science)', place: 'Anurag University', year: '2024 - 2028', status: 'ongoing', detail: 'CGPA 8.91' },
-  { title: 'Intermediate', place: 'Sri Chaitanya Jr Kalasala', year: '2024', status: 'completed', detail: '93.3%' },
-  { title: 'Secondary School', place: 'Sri Chaitanya Techno School', year: '2022', status: 'completed', detail: '9.7' },
-]
-
 export const certifications = [
   { title: 'Artificial Intelligence Fundamentals', url: 'https://www.credly.com/badges/073ee3ef-4efc-4981-9d86-73f003b3d4ba/public_url' },
   { title: 'Data Fundamentals', url: 'https://www.credly.com/badges/ba6379b6-2f30-490e-9425-eb499c9e417c/public_url' },
@@ -94,21 +88,25 @@ export const certifications = [
   { title: 'Introduction to Modern AI', url: 'https://www.credly.com/badges/c34be4d9-95a0-48be-bcf3-583cd959a497/public_url' },
 ]
 
-// Technologies visualised as nodes orbiting the robot in the 3D world.
-// Keep in sync with skillGroups above.
-export const techOrbit = [
-  { label: 'React', group: 'Frontend', ring: 0, angle: 0.0 },
-  { label: 'JavaScript', group: 'Tools', ring: 1, angle: 0.55 },
-  { label: 'Node.js', group: 'Backend', ring: 0, angle: 1.1 },
-  { label: 'Python', group: 'Data', ring: 2, angle: 1.65 },
-  { label: 'MongoDB', group: 'Data', ring: 1, angle: 2.2 },
-  { label: 'Express', group: 'Backend', ring: 2, angle: 2.75 },
-  { label: 'FastAPI', group: 'Backend', ring: 1, angle: 3.3 },
-  { label: 'Tailwind', group: 'Frontend', ring: 2, angle: 3.85 },
-  { label: 'Three.js', group: 'Frontend', ring: 0, angle: 4.4 },
-  { label: 'Git', group: 'Tools', ring: 2, angle: 4.95 },
-  { label: 'BigQuery', group: 'Data', ring: 0, angle: 5.5 },
-  { label: 'C++', group: 'Tools', ring: 1, angle: 6.05 },
+// Badge/certificate collection — data-driven grid. Each entry optionally pairs
+// a badge face image with a certificate image (paths under /public).
+// `badge` / `certificate` may be null: the grid renders a monogram seal /
+// credential-link fallback instead. Growing the collection is appending entries.
+export const badges = [
+  ...certifications.map((c, i) => ({
+    id: `cert-${i}`,
+    label: c.title,
+    sub: 'Credly',
+    badge: null,
+    certificate: null,
+    url: c.url,
+  })),
+  ...projects.map((p, i) => ({
+    id: `project-${i}`,
+    label: p.title,
+    sub: p.year,
+    badge: null,
+    certificate: null,
+    url: p.github,
+  })),
 ]
-
-export const groupColors = Object.fromEntries(skillGroups.map((g) => [g.title, g.color]))

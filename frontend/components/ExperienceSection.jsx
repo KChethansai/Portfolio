@@ -1,46 +1,40 @@
-import { Reveal, SectionHeading } from './motion/primitives'
+import { SectionHeading, useTitleRise, useHighlightWipe } from './fx/SectionTitle'
 import { experience } from '@/lib/data'
 
 export default function ExperienceSection() {
+  useTitleRise('.experience-title', '.experience-title', 'top 100%')
+  useHighlightWipe('.experience-highlight', 'top 90%', 0.7)
+
   return (
-    <section id='experience' className='relative scroll-mt-24 py-16 md:py-28 section-tint-1'>
-      <div className='mx-auto max-w-[1400px] px-6'>
-        <SectionHeading index='02' kicker='Experience' title={<>Learn by doing.</>} />
-
-        <div className='relative'>
-          {/* Vertical editorial line */}
-          <div className='absolute left-[7px] top-2 bottom-2 w-px bg-white/[0.06]' />
-
-          <div className='flex flex-col gap-12'>
-            {experience.map((item, i) => (
-              <Reveal key={item.title} delay={i * 0.08}>
-                <div className='relative pl-8'>
-                  {/* Timeline dot */}
-                  <div className='absolute left-0 top-2 h-[15px] w-[15px] rounded-full border-2 border-[var(--color-accent)]/50 bg-[var(--color-void)] shadow-[0_0_8px_rgba(34,211,238,0.15)]' />
-
-                  <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-muted)]'>
-                    {item.year}
-                  </p>
-
-                  <h3 className='mt-2 text-xl font-bold tracking-tight text-white md:text-2xl'>
-                    {item.title}
-                  </h3>
-
-                  <p className='mt-1 text-sm text-[var(--color-ink-muted)]'>
-                    {item.company}
-                  </p>
-
-                  <p className='mt-4 max-w-2xl text-[0.95rem] leading-[1.7] text-[var(--color-ink-body)]'>
-                    {item.summary}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
+    <section id="experience" className="relative w-full bg-black px-5 pb-10 pt-24 text-white">
+      <SectionHeading
+        accent="Work"
+        title="Experience"
+        titleClass="experience-title text-[3.6em] md:text-[8em] lg:text-[10.8em]"
+        highlightClass="experience-highlight"
+      />
+      <div className="flex flex-col gap-16 pt-10 md:gap-24">
+        {experience.slice(0, 2).map((job) => (
+          <article key={job.company}>
+            <div className="relative w-fit overflow-hidden">
+              <p className="font-bungee text-lg md:text-3xl uppercase text-default">{job.company}</p>
+              <span className="experience-highlight absolute inset-0 block bg-default" />
+            </div>
+            <div className="relative mt-4 w-fit overflow-hidden">
+              <h3 className="font-sans text-4xl md:text-7xl font-bold uppercase tracking-tighter">{job.title}</h3>
+              <span className="experience-highlight absolute inset-0 block bg-default" />
+            </div>
+            <div className="relative mt-3 w-fit overflow-hidden">
+              <p className="font-sans text-sm md:text-base font-semibold uppercase tracking-tighter">{job.year}</p>
+              <span className="experience-highlight absolute inset-0 block bg-default" />
+            </div>
+            <div className="relative mt-6 overflow-hidden">
+              <p className="font-sans text-lg md:text-2xl lg:max-w-3xl">{job.summary}</p>
+              <span className="experience-highlight absolute inset-0 block bg-default" />
+            </div>
+          </article>
+        ))}
       </div>
-
-      <div className='editorial-rule mx-auto mt-20 max-w-[1400px]' />
     </section>
   )
 }
