@@ -31,7 +31,6 @@ export const projects = [
   {
     title: 'AI Health Prediction Application',
     github: 'https://github.com/KChethansai/Ai-health-prediction-system',
-    website: 'https://medibuddy-scan.lovable.app/',
     tech: ['Python', 'FastAPI', 'XGBoost', 'Gradient Boosting', 'OCR'],
     year: 'Oct 2025 – Dec 2025',
     summary:

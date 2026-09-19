@@ -53,14 +53,15 @@ export default function ProjectsTable() {
                     {p.year}
                   </td>
                   <td className="border-y border-[#222] py-6 align-top font-sans text-sm font-semibold uppercase tracking-tight">
-                    {p.metric ? (
-                      <span>{p.metric.value} {p.metric.label}</span>
-                    ) : (
-                      <span className="flex gap-4">
-                        <a href={p.github} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} source code`} className="underline underline-offset-4">GitHub</a>
-                        <a href={p.website} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} live site`} className="underline underline-offset-4">Live</a>
-                      </span>
+                    {p.metric && (
+                      <span className="block">{p.metric.value} {p.metric.label}</span>
                     )}
+                    <span className="flex gap-4">
+                      <a href={p.github} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} source code`} className="underline underline-offset-4">GitHub</a>
+                      {p.website && (
+                        <a href={p.website} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} live site`} className="underline underline-offset-4">Live</a>
+                      )}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -92,9 +93,11 @@ export default function ProjectsTable() {
                   <a href={p.github} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} source code`} className="inline-block py-2 font-sans text-sm font-bold uppercase underline underline-offset-4">
                     GitHub
                   </a>
-                  <a href={p.website} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} live site`} className="inline-block py-2 font-sans text-sm font-bold uppercase underline underline-offset-4">
-                    Live
-                  </a>
+                  {p.website && (
+                    <a href={p.website} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} live site`} className="inline-block py-2 font-sans text-sm font-bold uppercase underline underline-offset-4">
+                      Live
+                    </a>
+                  )}
                 </div>
               </article>
           ))}
