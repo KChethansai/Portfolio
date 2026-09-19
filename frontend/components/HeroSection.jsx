@@ -1,150 +1,139 @@
-import { Fragment, useEffect, useId, useMemo, useRef } from 'react'
-import {
-  motion,
-  motionValue,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useTime,
-  useAnimationFrame,
-} from 'motion/react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { motion, motionValue, useAnimationFrame, useSpring, useTransform } from 'motion/react'
 import { profile } from '@/lib/data'
-import { useReducedMotion } from '@/lib/performance'
+import { useDeviceCapability, useReducedMotion } from '@/lib/performance'
+import { attachPointer, pointerX, pointerY } from '@/lib/pointer'
+import { gsap, useGSAP } from '@/lib/gsap'
+import MagneticButton from './effects/MagneticButton'
+import Scene3D from './effects/Scene3D'
 
-const NUM_AUTO_BLOBS = 25
+const NUM_AUTO_BLOBS = 10
+const HEAD_R = 112
+const BODY1_R = 84
+const BODY2_R = 63
 
-export default function HeroSection({ parallaxStrength = 3, blobSize = 140 }) {
+export default function HeroSection() {
   const reduced = useReducedMotion()
-  const containerRef = useRef(null)
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-  const mouseXRatio = useMotionValue(0)
-  const mouseYRatio = useMotionValue(0)
-  const smooth = { stiffness: 300, damping: 40 }
-  const smoothX = useSpring(mouseXRatio, smooth)
-  const smoothY = useSpring(mouseYRatio, smooth)
-  const baseX = useTransform(smoothX, [-1, 1], [parallaxStrength, -parallaxStrength])
-  const baseY = useTransform(smoothY, [-1, 1], [parallaxStrength, -parallaxStrength])
-  const revealX = useTransform(smoothX, [-1, 1], [parallaxStrength * 2, -parallaxStrength * 2])
-  const revealY = useTransform(smoothY, [-1, 1], [parallaxStrength * 2, -parallaxStrength * 2])
+  const tier = useDeviceCapability()
+  // Goo is the most expensive hero effect (fullscreen SVG filter re-rastered
+  // per frame) — off under reduced motion and on low-tier devices, same gate
+  // as Scene3D. Static h1 covers both cases.
+  const gooOn = !reduced && tier !== 'low'
+  const sectionRef = useRef(null)
+  const contentRef = useRef(null)
+  const maskId = `hero-mask-${useId().replace(/:/g, '')}`
+  const filterId = `hero-goo-${useId().replace(/:/g, '')}`
 
+  useEffect(() => attachPointer(), [])
+
+  const [size, setSize] = useState({ w: 0, h: 0 })
   useEffect(() => {
-    if (reduced) return
-    const handleMove = (e) => {
-      if (!containerRef.current) return
-      const rect = containerRef.current.getBoundingClientRect()
-      const inside =
-        e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
-      if (!inside) {
-        mouseXRatio.set(0)
-        mouseYRatio.set(0)
-        return
-      }
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      mouseX.set(x)
-      mouseY.set(y)
-      mouseXRatio.set((x / rect.width) * 2 - 1)
-      mouseYRatio.set((y / rect.height) * 2 - 1)
-    }
-    window.addEventListener('mousemove', handleMove)
-    return () => window.removeEventListener('mousemove', handleMove)
-  }, [reduced, mouseX, mouseY, mouseXRatio, mouseYRatio])
+    const el = sectionRef.current
+    if (!el) return
+    const measure = () => setSize({ w: el.clientWidth, h: el.clientHeight })
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
 
-  const headX = useSpring(mouseX, { stiffness: 250, damping: 30 })
-  const headY = useSpring(mouseY, { stiffness: 250, damping: 30 })
-  const body1X = useSpring(mouseX, { stiffness: 220, damping: 34 })
-  const body1Y = useSpring(mouseY, { stiffness: 220, damping: 34 })
-  const body2X = useSpring(mouseX, { stiffness: 190, damping: 38 })
-  const body2Y = useSpring(mouseY, { stiffness: 190, damping: 38 })
-  const head = { x: headX, y: headY }
-  const body1 = { x: body1X, y: body1Y }
-  const body2 = { x: body2X, y: body2Y }
+  const sx = useSpring(pointerX, { stiffness: 120, damping: 22 })
+  const sy = useSpring(pointerY, { stiffness: 120, damping: 22 })
+  const baseX = useTransform(sx, [-1, 1], [3, -3])
+  const baseY = useTransform(sy, [-1, 1], [3, -3])
+  const revealX = useTransform(sx, [-1, 1], [6, -6])
+  const revealY = useTransform(sy, [-1, 1], [6, -6])
 
-  const time = useTime()
-  const wobble = blobSize * 0.35
-  const satX = useTransform(time, (t) => head.x.get() + Math.sin(t * 0.002) * wobble)
-  const satY = useTransform(time, (t) => head.y.get() + Math.cos(t * 0.002) * wobble)
+  const cursorX = useTransform(sx, [-1, 1], [0, size.w])
+  const cursorY = useTransform(sy, [-1, 1], [0, size.h])
+  const headX = useSpring(cursorX, { stiffness: 250, damping: 30 })
+  const headY = useSpring(cursorY, { stiffness: 250, damping: 30 })
+  const body1X = useSpring(cursorX, { stiffness: 220, damping: 34 })
+  const body1Y = useSpring(cursorY, { stiffness: 220, damping: 34 })
+  const body2X = useSpring(cursorX, { stiffness: 190, damping: 38 })
+  const body2Y = useSpring(cursorY, { stiffness: 190, damping: 38 })
 
   const autoBlobs = useMemo(
     () =>
-      [...Array(NUM_AUTO_BLOBS)].map(() => ({
-        mainX: motionValue(0),
-        mainY: motionValue(0),
-        satX: motionValue(0),
-        satY: motionValue(0),
+      Array.from({ length: NUM_AUTO_BLOBS }, () => ({
+        x: motionValue(0),
+        y: motionValue(0),
         phaseX: Math.random() * Math.PI * 2,
         phaseY: Math.random() * Math.PI * 2,
         speedX: 0.0005 + Math.random() * 0.0005,
         speedY: 0.0003 + Math.random() * 0.0005,
-        radius: blobSize * 0.6,
+        r: 80 + Math.random() * 50,
       })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 
-  useAnimationFrame((t) => {
-    if (reduced || !containerRef.current) return
-    const width = containerRef.current.clientWidth
-    const height = containerRef.current.clientHeight
-    autoBlobs.forEach((b) => {
-      const mainX = ((Math.sin(t * b.speedX + b.phaseX) + 1) / 2) * width
-      const mainY = ((Math.cos(t * b.speedY + b.phaseY) + 1) / 2) * height
-      b.mainX.set(mainX)
-      b.mainY.set(mainY)
-      const satRadius = blobSize * 0.35
-      b.satX.set(mainX + Math.sin(t * 0.002 + b.phaseX) * satRadius)
-      b.satY.set(mainY + Math.cos(t * 0.002 + b.phaseY) * satRadius)
+  // Pauses the goo loop when the hero is offscreen (mirrors Scene3D's IO gate).
+  const visibleRef = useRef(true)
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return undefined
+    const io = new IntersectionObserver(([entry]) => {
+      visibleRef.current = entry.isIntersecting
     })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  useAnimationFrame((t) => {
+    if (!gooOn || !visibleRef.current) return
+    const el = sectionRef.current
+    if (!el) return
+    // Cached measure from state — no per-frame layout reads.
+    const w = size.w || el.clientWidth
+    const h = size.h || el.clientHeight
+    for (const b of autoBlobs) {
+      b.x.set(((Math.sin(t * b.speedX + b.phaseX) + 1) / 2) * w)
+      b.y.set(((Math.cos(t * b.speedY + b.phaseY) + 1) / 2) * h)
+    }
   })
 
-  const maskId = useId()
-  const filterId = useId()
+  useGSAP(
+    () => {
+      if (reduced) return
+      gsap.to(contentRef.current, {
+        y: -80,
+        autoAlpha: 0.15,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    },
+    { scope: sectionRef },
+  )
 
   const words = profile.name.split(' ')
-  const baseLayer = {
-    position: 'absolute',
-    inset: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    willChange: 'transform',
-    pointerEvents: 'none',
-  }
-
-  const nameBase = (
-    <h1 className="text-center font-sans text-[clamp(3rem,11vw,10rem)] font-black uppercase leading-[0.9] tracking-tight text-white">
-      {words.map((w, i) => (
-        <span key={i} className="block">
-          {w}
-        </span>
-      ))}
-    </h1>
-  )
-
-  const nameReveal = (
-    <div
-      aria-hidden
-      className="text-center font-bungee text-[clamp(3rem,11vw,10rem)] uppercase leading-[0.9] text-transparent"
-      style={{ WebkitTextStroke: '2px #d2ff00' }}
-    >
-      {words.map((w, i) => (
-        <span key={i} className="block">
-          {w}
-        </span>
-      ))}
-    </div>
-  )
+  const nameSize = 'text-[clamp(3rem,11vw,9rem)] uppercase leading-[0.9]'
 
   return (
-    <section className="flex h-dvh w-full items-center justify-center overflow-hidden bg-black">
-      <div ref={containerRef} className="relative h-full w-full overflow-hidden">
-        {!reduced && (
-          <svg width={0} height={0} style={{ position: 'absolute' }} aria-hidden>
+    <section ref={sectionRef} className="relative flex min-h-dvh flex-col overflow-hidden bg-black">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(60% 40% at 50% 0%, rgba(210,255,0,0.06), transparent 70%)' }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(50% 35% at 50% 45%, rgba(255,255,255,0.05), transparent 70%)' }}
+        />
+        <Scene3D targetRef={sectionRef} />
+        {/* Text-shade: guarantees name/meta contrast whatever pose the 3D object holds. */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(48% 42% at 50% 46%, rgba(0,0,0,0.55), transparent 70%)' }}
+        />
+        {gooOn && (
+          <svg className="absolute inset-0 h-full w-full">
             <defs>
               <filter id={filterId}>
-                <feGaussianBlur stdDeviation="12" result="blur" />
+                <feGaussianBlur stdDeviation="8" result="blur" />
                 <feColorMatrix
                   in="blur"
                   mode="matrix"
@@ -155,79 +144,108 @@ export default function HeroSection({ parallaxStrength = 3, blobSize = 140 }) {
               </filter>
               <mask id={maskId}>
                 <g filter={`url(#${filterId})`}>
-                  <motion.g animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                    {autoBlobs.map((b, i) => (
-                      <Fragment key={i}>
-                        <motion.circle cx={b.satX} cy={b.satY} r={blobSize * 0.6} fill="white" />
-                        <motion.circle cx={b.mainX} cy={b.mainY} r={blobSize * 0.8} fill="white" />
-                        <motion.circle cx={b.mainX} cy={b.mainY} r={blobSize * 0.45} fill="white" />
-                      </Fragment>
-                    ))}
-                    <motion.circle cx={satX} cy={satY} r={blobSize * 0.6} fill="white" />
-                    <motion.circle cx={head.x} cy={head.y} r={blobSize * 0.8} fill="white" />
-                    <motion.circle cx={body1.x} cy={body1.y} r={blobSize * 0.6} fill="white" />
-                    <motion.circle cx={body2.x} cy={body2.y} r={blobSize * 0.45} fill="white" />
+                  {autoBlobs.map((b, i) => (
+                    <motion.g key={i} style={{ x: b.x, y: b.y }}>
+                      <circle r={b.r} fill="white" />
+                    </motion.g>
+                  ))}
+                  <motion.g style={{ x: headX, y: headY }}>
+                    <circle r={HEAD_R} fill="white" />
+                  </motion.g>
+                  <motion.g style={{ x: body1X, y: body1Y }}>
+                    <circle r={BODY1_R} fill="white" />
+                  </motion.g>
+                  <motion.g style={{ x: body2X, y: body2Y }}>
+                    <circle r={BODY2_R} fill="white" />
                   </motion.g>
                 </g>
               </mask>
             </defs>
           </svg>
         )}
+      </div>
 
-        <motion.div style={{ ...baseLayer, x: reduced ? 0 : baseX, y: reduced ? 0 : baseY }}>
-          {nameBase}
-        </motion.div>
+      <div
+        ref={contentRef}
+        className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center"
+      >
+        <div className="grid justify-items-center">
+          {!gooOn ? (
+            <h1 className={`[grid-area:1/1] font-sans font-black text-white ${nameSize}`}>
+              {words.map((w, i) => (
+                <span key={i} className="block">
+                  {w}
+                </span>
+              ))}
+            </h1>
+          ) : (
+            <>
+              <motion.h1
+                style={{ x: baseX, y: baseY }}
+                className={`[grid-area:1/1] font-sans font-black text-white ${nameSize}`}
+              >
+                {words.map((w, i) => (
+                  <span key={i} className="block">
+                    {w}
+                  </span>
+                ))}
+              </motion.h1>
+              <motion.div
+                aria-hidden="true"
+                style={{
+                  x: revealX,
+                  y: revealY,
+                  mask: `url(#${maskId})`,
+                  WebkitMask: `url(#${maskId})`,
+                  WebkitTextStroke: '2px #d2ff00',
+                }}
+                className={`[grid-area:1/1] font-bungee text-transparent ${nameSize}`}
+              >
+                {words.map((w, i) => (
+                  <span key={i} className="block">
+                    {w}
+                  </span>
+                ))}
+              </motion.div>
+            </>
+          )}
+        </div>
 
-        {!reduced && (
-          <motion.div
-            style={{
-              ...baseLayer,
-              x: revealX,
-              y: revealY,
-              mask: `url(#${maskId})`,
-              WebkitMask: `url(#${maskId})`,
-              pointerEvents: 'none',
-            }}
-          >
-            {nameReveal}
-          </motion.div>
-        )}
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center px-6 pb-16 text-center">
+        <div className="mt-8 flex flex-col items-center">
           <motion.p
-            initial={{ opacity: 0, y: 14 }}
+            initial={reduced ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="font-mono text-sm font-medium tracking-tight text-default md:text-base"
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="font-sans text-sm font-semibold uppercase tracking-wide text-default md:text-base"
           >
             {profile.roles.join(' · ')}
           </motion.p>
           <motion.p
-            initial={{ opacity: 0, y: 14 }}
+            initial={reduced ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45 }}
-            className="mt-3 max-w-[60ch] text-sm leading-relaxed text-white/60"
+            transition={{ duration: 0.7, delay: 0.35 }}
+            className="mt-4 max-w-[60ch] text-sm leading-relaxed text-white/60 md:text-base"
           >
             {profile.tagline}
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={reduced ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="pointer-events-auto mt-6 flex flex-wrap items-center justify-center gap-4"
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="mt-8 flex flex-wrap justify-center gap-4"
           >
-            <a
+            <MagneticButton
               href="#intro"
               className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-black transition-colors duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
             >
               View Work
-            </a>
-            <a
+            </MagneticButton>
+            <MagneticButton
               href={`mailto:${profile.email}`}
               className="rounded-full border border-white/15 px-7 py-3 text-sm font-medium text-white/80 transition-colors duration-300 hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
             >
               Contact
-            </a>
+            </MagneticButton>
           </motion.div>
         </div>
       </div>

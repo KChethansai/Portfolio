@@ -1,39 +1,82 @@
-import { SectionHeading, useTitleRise, useHighlightWipe } from './fx/SectionTitle'
+import { useRef } from 'react'
+import { gsap, useGSAP } from '@/lib/gsap'
+import { SectionHeading } from './fx/SectionTitle'
+import { useTitleRise, useHighlightWipe } from './fx/reveal'
+import ScrollReveal from './effects/ScrollReveal'
 import { experience } from '@/lib/data'
+import { useReducedMotion } from '@/lib/performance'
+
+function initials(name) {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+}
 
 export default function ExperienceSection() {
+  const listRef = useRef(null)
+  const fillRef = useRef(null)
+  const reduced = useReducedMotion()
   useTitleRise('.experience-title', '.experience-title', 'top 100%')
   useHighlightWipe('.experience-highlight', 'top 90%', 0.7)
 
+  useGSAP(() => {
+    if (reduced || !listRef.current || !fillRef.current) return
+    gsap.fromTo(
+      fillRef.current,
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        transformOrigin: 'top center',
+        scrollTrigger: {
+          trigger: listRef.current,
+          start: 'top 75%',
+          end: 'bottom 55%',
+          scrub: true,
+        },
+      },
+    )
+  }, [reduced])
+
   return (
-    <section id="experience" className="relative w-full bg-black px-5 pb-10 pt-24 text-white">
-      <SectionHeading
-        accent="Work"
-        title="Experience"
-        titleClass="experience-title text-[3.6em] md:text-[8em] lg:text-[10.8em]"
-        highlightClass="experience-highlight"
-      />
-      <div className="flex flex-col gap-16 pt-10 md:gap-24">
-        {experience.slice(0, 2).map((job) => (
-          <article key={job.company}>
-            <div className="relative w-fit overflow-hidden">
-              <p className="font-bungee text-lg md:text-3xl uppercase text-default">{job.company}</p>
-              <span className="experience-highlight absolute inset-0 block bg-default" />
-            </div>
-            <div className="relative mt-4 w-fit overflow-hidden">
-              <h3 className="font-sans text-4xl md:text-7xl font-bold uppercase tracking-tighter">{job.title}</h3>
-              <span className="experience-highlight absolute inset-0 block bg-default" />
-            </div>
-            <div className="relative mt-3 w-fit overflow-hidden">
-              <p className="font-sans text-sm md:text-base font-semibold uppercase tracking-tighter">{job.year}</p>
-              <span className="experience-highlight absolute inset-0 block bg-default" />
-            </div>
-            <div className="relative mt-6 overflow-hidden">
-              <p className="font-sans text-lg md:text-2xl lg:max-w-3xl">{job.summary}</p>
-              <span className="experience-highlight absolute inset-0 block bg-default" />
-            </div>
-          </article>
-        ))}
+    <section id="experience" className="relative w-full overflow-hidden bg-black text-white">
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10 pt-24 md:pt-32 pb-16 md:pb-24">
+        <SectionHeading
+          accent="Work"
+          title="Experience"
+          titleClass="experience-title"
+          highlightClass="experience-highlight"
+        />
+        <div ref={listRef} className="relative mt-12 md:mt-16">
+          <div aria-hidden className="pointer-events-none absolute left-0 top-0 bottom-0 w-px bg-white/10">
+            {!reduced && <div ref={fillRef} className="h-full w-full bg-default" />}
+          </div>
+          {experience.slice(0, 2).map((job) => (
+            <ScrollReveal
+              as="article"
+              key={job.company}
+              className="relative pl-8 md:pl-12 pb-16 md:pb-20 last:pb-0"
+            >
+              <span aria-hidden className="pointer-events-none absolute left-0 top-2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-default" />
+              <div className="flex items-center gap-4">
+                <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center border border-white/20 font-bungee text-sm text-default">
+                  {initials(job.company)}
+                </span>
+                <p className="font-bungee text-base uppercase text-default md:text-xl">{job.company}</p>
+              </div>
+              <h3 className="mt-4 font-sans font-bold uppercase tracking-tighter leading-tight text-[clamp(1.75rem,4vw,3.5rem)]">
+                {job.title}
+              </h3>
+              <p className="mt-2 text-sm uppercase text-white/50">{job.year}</p>
+              <p className="mt-5 max-w-3xl text-base md:text-lg leading-relaxed text-white/70">
+                {job.summary}
+              </p>
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
     </section>
   )

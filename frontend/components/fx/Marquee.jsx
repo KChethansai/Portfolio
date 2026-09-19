@@ -1,22 +1,27 @@
-// Infinite scroll-direction marquee — verbatim port of the reference
-// partners/footer ticker: gsap.ticker at 0.4px/tick, direction flips with
-// scroll direction, wraps on ±contentWidth. Two identical children required
-// for the seamless loop. Scoped ScrollTrigger cleanup (never killAll).
+// Infinite scroll-direction marquee: gsap.ticker at 0.4px/tick, direction
+// flips with scroll direction, wraps on ±contentWidth. Two identical
+// children required for the seamless loop. Width re-measured on resize and
+// font load; static fallback under reduced motion. Scoped cleanup only.
 import { useEffect, useRef } from 'react'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
+import { useReducedMotion } from '@/lib/performance'
 
 export default function Marquee({ children, className = '', rowClassName = '' }) {
   const marqueeRef = useRef(null)
   const contentRef = useRef(null)
+  const reduced = useReducedMotion()
 
   useEffect(() => {
-    if (!marqueeRef.current || !contentRef.current) return
+    if (reduced || !marqueeRef.current || !contentRef.current) return
     const marquee = marqueeRef.current
     const content = contentRef.current
     let direction = 1
     const speed = 0.4
     let x = 0
-    const contentWidth = content.offsetWidth
+    let contentWidth = content.offsetWidth
+    const measure = () => {
+      contentWidth = content.offsetWidth
+    }
     gsap.set(marquee, { x: 0 })
     const tick = () => {
       x += speed * direction
@@ -33,14 +38,27 @@ export default function Marquee({ children, className = '', rowClassName = '' })
         direction = self.direction === 1 ? 1 : -1
       },
     })
+    window.addEventListener('resize', measure)
+    if (document.fonts?.ready) document.fonts.ready.then(measure).catch(() => {})
     return () => {
       gsap.ticker.remove(tick)
       st.kill()
+      window.removeEventListener('resize', measure)
     }
-  }, [])
+  }, [reduced])
+
+  if (reduced) {
+    return (
+      <div className={`relative w-full overflow-hidden ${className}`}>
+        <div className={`flex flex-wrap items-center gap-x-8 gap-y-4 ${rowClassName}`}>
+          {children}
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className={`relative overflow-hidden w-full ${className}`}>
+    <div className={`relative w-full overflow-hidden ${className}`}>
       <div ref={marqueeRef} className="flex w-max">
         <div ref={contentRef} className={rowClassName}>
           {children}

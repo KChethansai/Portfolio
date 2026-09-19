@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import clsx from 'clsx'
 import { gsap, useGSAP } from '@/lib/gsap'
 import { profile } from '@/lib/data'
@@ -26,8 +26,24 @@ export default function Menu({ open, onClose }) {
   const rootRef = useRef(null)
   const reduced = useReducedMotion()
 
+  // Escape closes + returns focus to the menu button. Parallax/hover
+  // timelines are decorative — skipped under reduced motion (CSS transition
+  // still opens/closes the panel).
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        onClose?.()
+        document.querySelector('[aria-controls="site-menu"]')?.focus()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
   useGSAP(
     () => {
+      if (reduced) return
       const menu = rootRef.current
       if (!menu) return
       const leftGallery = menu.querySelector('.menu-left-gallery')
@@ -61,7 +77,7 @@ export default function Menu({ open, onClose }) {
 
   useGSAP(
     () => {
-      if (!open) return
+      if (!open || reduced) return
       const menuBgs = gsap.utils.toArray('.menu-item .menu-bg', rootRef.current)
       const tl = gsap.timeline()
       menuBgs.forEach((bg, index) => {
@@ -79,6 +95,7 @@ export default function Menu({ open, onClose }) {
 
   useGSAP(
     () => {
+      if (reduced) return
       const menuItems = gsap.utils.toArray('.menu-item .menu-link', rootRef.current)
       const cleanups = menuItems.map((link) => {
         const tl = gsap.timeline({ paused: true })
@@ -100,7 +117,7 @@ export default function Menu({ open, onClose }) {
 
   useGSAP(
     () => {
-      if (!open) return
+      if (!open || reduced) return
       const socialBgs = gsap.utils.toArray('.social-bg', rootRef.current)
       const tl = gsap.timeline()
       socialBgs.forEach((bg, index) => {
@@ -118,6 +135,7 @@ export default function Menu({ open, onClose }) {
 
   useGSAP(
     () => {
+      if (reduced) return
       const socialItems = gsap.utils.toArray('.social-item', rootRef.current)
       const cleanups = socialItems.map((item) => {
         const link = item.querySelector('.social-link')
@@ -148,8 +166,10 @@ export default function Menu({ open, onClose }) {
   return (
     <div
       ref={rootRef}
+      id="site-menu"
+      inert={!open}
       className={clsx(
-        'menu fixed top-0 left-0 md:px-10 w-full h-dvh bg-musgo transition-transform duration-700 overflow-hidden z-[99]',
+        'menu fixed top-0 left-0 md:px-10 w-full h-dvh bg-musgo transition-transform duration-700 overflow-x-hidden overflow-y-auto z-[99]',
         open ? 'translate-y-0' : '-translate-y-full',
       )}
       aria-hidden={!open}
@@ -223,7 +243,7 @@ export default function Menu({ open, onClose }) {
                     <a
                       href={social.href}
                       {...(isExternal(social.href)
-                        ? { target: '_blank', rel: 'noreferrer' }
+                        ? { target: '_blank', rel: 'noopener noreferrer' }
                         : {})}
                       className="social-link block relative text-white"
                     >

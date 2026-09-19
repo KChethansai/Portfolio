@@ -41,7 +41,7 @@ export const projects = [
     title: 'Kanvora — Collaborative Project Board',
     github: 'https://github.com/KChethansai/Trello-Clone',
     website: 'https://trello-clone-5d5t.onrender.com/',
-    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.IO', 'react-beautiful-dnd'],
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.IO', 'dnd-kit'],
     year: 'Apr 2026 – Jun 2026',
     summary:
       'Trello-style project management app with real-time collaboration using Socket.IO. Drag-and-drop cards and columns with dnd-kit, including concurrent-edit race-condition handling. Role-based access control (USER / AUTHOR / ADMIN) with JWT authentication, protected routes, and a settings panel for board management.',

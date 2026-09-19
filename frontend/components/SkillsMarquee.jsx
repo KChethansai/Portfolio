@@ -1,10 +1,10 @@
 import Marquee from './fx/Marquee'
-import { SectionHeading, useTitleRise, useHighlightWipe } from './fx/SectionTitle'
+import { SectionHeading } from './fx/SectionTitle'
+import { useTitleRise, useHighlightWipe } from './fx/reveal'
 import { skillGroups } from '@/lib/data'
-import { useReducedMotion } from '@/lib/performance'
 
 const skills = skillGroups.flatMap((g) => g.items)
-const rowClassName = 'flex items-center gap-12 md:gap-16 2xl:gap-20 pr-20 scale-50 md:scale-75 lg:scale-100'
+const EDGE_MASK = 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)'
 
 function SkillItems() {
   return (
@@ -14,8 +14,8 @@ function SkillItems() {
           key={`${skill}-${i}`}
           className={
             i % 2 === 0
-              ? 'font-sans text-5xl md:text-7xl font-bold uppercase tracking-tighter text-white whitespace-nowrap'
-              : 'font-bungee text-3xl md:text-5xl uppercase text-default whitespace-nowrap'
+              ? 'whitespace-nowrap font-sans text-[clamp(1.75rem,4vw,3.5rem)] font-bold uppercase leading-none text-white'
+              : 'whitespace-nowrap font-bungee text-[clamp(1.25rem,3vw,2.25rem)] uppercase leading-none text-default'
           }
         >
           {skill}
@@ -26,47 +26,36 @@ function SkillItems() {
 }
 
 export default function SkillsMarquee() {
-  const reduced = useReducedMotion()
   useTitleRise('.skills-title', '.skills-title')
   useHighlightWipe('.skills-highlight')
 
   return (
-    <section id="skills" className="relative w-full bg-black py-24 text-white overflow-hidden">
-      <div className="px-5">
+    <section id="skills" className="relative w-full overflow-hidden bg-black py-24 text-white md:py-32">
+      <div className="px-5 md:px-10">
         <SectionHeading
           accent="Stack"
           title="Skills"
-          titleClass="skills-title text-[3.6em] md:text-[8em] lg:text-[10.8em]"
+          titleClass="skills-title"
           highlightClass="skills-highlight"
         />
         <div className="pt-10">
           <div className="relative w-fit overflow-hidden">
-            <h3 className="font-sans text-sm font-bold uppercase tracking-tighter">
+            <p className="font-sans text-sm font-bold uppercase tracking-tighter">
               Shipped with
-            </h3>
-            <span className="skills-highlight absolute inset-0 block bg-default" />
-          </div>
-          <div className="relative overflow-hidden">
-            <p className="mt-6 font-sans text-2xl lg:max-w-lg">
-              Every project in this portfolio runs on
-              <strong className="mx-1.5 font-bungee font-normal text-default">real tools</strong>
-              picked for the job.
             </p>
-            <span className="skills-highlight absolute inset-0 block bg-default" />
+            <span className="skills-highlight pointer-events-none absolute inset-0 block bg-default" aria-hidden />
           </div>
+          <p className="mt-6 max-w-xl font-sans text-lg leading-relaxed text-white/70 md:text-xl">
+            Every project in this portfolio runs on
+            <strong className="mx-1.5 font-bungee font-normal text-default">real tools</strong>
+            picked for the job.
+          </p>
         </div>
       </div>
-      <div className="relative mt-14 overflow-hidden">
-        {reduced ? (
-          <div className="flex flex-wrap items-center gap-6 px-5">
-            <SkillItems />
-          </div>
-        ) : (
-          <Marquee rowClassName={rowClassName}>
-            <SkillItems />
-          </Marquee>
-        )}
-        <span className="skills-highlight pointer-events-none absolute inset-0 block bg-default" />
+      <div className="relative mt-12 overflow-hidden" style={{ maskImage: EDGE_MASK, WebkitMaskImage: EDGE_MASK }}>
+        <Marquee rowClassName="flex items-center gap-10 pr-10 md:gap-14 md:pr-14">
+          <SkillItems />
+        </Marquee>
       </div>
     </section>
   )

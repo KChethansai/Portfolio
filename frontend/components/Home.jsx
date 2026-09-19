@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react'
-import { useReducedMotion } from '@/lib/performance'
+import NoiseOverlay from './effects/NoiseOverlay'
 
 const Header = lazy(() => import('./shell/Header'))
 const Menu = lazy(() => import('./shell/Menu'))
@@ -13,10 +13,10 @@ const SiteFooter = lazy(() => import('./SiteFooter'))
 
 export default function Home() {
   const [open, setOpen] = useState(false)
-  useReducedMotion()
 
   return (
-    <div className="relative z-10 flex min-h-screen flex-col">
+    <div className="wrap-x relative z-10 flex min-h-screen flex-col bg-black">
+      <NoiseOverlay />
       <Suspense fallback={null}>
         <Header open={open} onToggle={() => setOpen((v) => !v)} />
       </Suspense>
@@ -24,6 +24,7 @@ export default function Home() {
         <Menu open={open} onClose={() => setOpen(false)} />
       </Suspense>
 
+      <main id="main-content" className="flex min-h-screen flex-col">
       <Suspense fallback={null}>
         <HeroSection />
       </Suspense>
@@ -43,6 +44,7 @@ export default function Home() {
       <Suspense fallback={null}>
         <CertGrid />
       </Suspense>
+      </main>
       <Suspense fallback={null}>
         <SiteFooter />
       </Suspense>

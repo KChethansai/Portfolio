@@ -52,28 +52,6 @@ button {
   will-change: transform;
 }
 
-.footer-menu-link {
-  will-change: transform;
-}
-
-.picture-area {
-  width: 100%;
-  height: 100%;
-}
-
-/* Helmet-grid hover wipe shape — reused by the badge/certificate grid */
-.format {
-  clip-path: ellipse(82% 85% at 60% 0);
-}
-
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
 :focus-visible {
   outline: 2px solid var(--color-default);
   outline-offset: 2px;
@@ -90,4 +68,8 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.wrap-x {
+  overflow-x: clip;
 }

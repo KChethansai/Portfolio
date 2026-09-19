@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Grid } from './shell/vectors'
-import { SectionHeading, useTitleRise, useHighlightWipe } from './fx/SectionTitle'
+import { SectionHeading } from './fx/SectionTitle'
+import { useTitleRise, useHighlightWipe } from './fx/reveal'
+import ScrollReveal from './effects/ScrollReveal'
 import { badges } from '@/lib/data'
 
 function initials(label) {
@@ -19,49 +21,50 @@ export default function CertGrid() {
   useHighlightWipe('.cert-highlight')
 
   return (
-    <section id="badges" className="my-30 w-full overflow-hidden bg-black" onClick={() => setActiveId(null)}>
-      <div className="relative px-5 py-10 lg:py-40">
-        <div className="mb-10 lg:mb-16">
-          <SectionHeading
-            accent="Proof"
-            title="Badges"
-            titleClass="cert-title text-5xl md:text-7xl"
-            highlightClass="cert-highlight"
-          />
-        </div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {badges.map((badge) => {
+    <section id="badges" className="w-full bg-black" onClick={() => setActiveId(null)}>
+      <div className="mx-auto max-w-[1400px] px-5 py-24 md:px-10 md:py-32">
+        <SectionHeading accent="Proof" title="Badges" titleClass="cert-title" highlightClass="cert-highlight" />
+        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mt-16 xl:grid-cols-3">
+          {badges.map((badge, i) => {
             const isActive = activeId === badge.id
             return (
-              <div
-                key={badge.id}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setActiveId(isActive ? null : badge.id)
-                }}
-                className="group relative cursor-pointer overflow-hidden xl:even:translate-y-40"
-              >
-                <div className="relative z-10 overflow-hidden">
-                  <Grid width="100%" height="100%" stroke="#222" />
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {badge.badge ? (
-                    <img src={badge.badge} alt={badge.label} className="object-contain" loading="lazy" />
-                  ) : (
-                    <div className="flex h-32 w-32 items-center justify-center rounded-full bg-musgo">
-                      <span className="font-bungee text-3xl text-default">{initials(badge.label)}</span>
-                    </div>
-                  )}
-                </div>
+              <ScrollReveal key={badge.id} delay={(i % 3) * 0.08}>
                 <div
-                  className={`absolute inset-0 transition-all duration-500 format rounded-lg overflow-hidden z-20 h-0 group-hover:h-full ${
-                    isActive ? 'h-full' : ''
-                  }`}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={isActive}
+                  aria-label={`${badge.label} details`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setActiveId(isActive ? null : badge.id)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setActiveId(isActive ? null : badge.id)
+                    } else if (e.key === 'Escape') {
+                      setActiveId(null)
+                    }
+                  }}
+                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/12 bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
                 >
-                  {badge.certificate ? (
-                    <img src={badge.certificate} alt={badge.label} className="object-contain" loading="lazy" />
-                  ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-default p-6 text-center">
+                  <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0" aria-hidden>
+                      <Grid width="100%" height="100%" stroke="#2a2a2a" />
+                    </div>
+                    {badge.badge ? (
+                      <img src={badge.badge} alt={badge.label} className="relative object-contain" loading="lazy" />
+                    ) : (
+                      <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-musgo">
+                        <span aria-hidden="true" className="font-bungee text-2xl text-default">{initials(badge.label)}</span>
+                      </div>
+                    )}
+                    <div
+                      className={`absolute inset-0 z-20 flex -translate-y-full flex-col items-center justify-center gap-3 bg-default p-6 text-center transition-transform duration-500 group-hover:translate-y-0 group-focus-within:translate-y-0 ${
+                        isActive ? 'translate-y-0' : ''
+                      }`}
+                    >
                       <p className="font-sans text-lg font-bold uppercase tracking-tight text-black">{badge.label}</p>
                       {badge.url && (
                         <a
@@ -75,15 +78,13 @@ export default function CertGrid() {
                         </a>
                       )}
                     </div>
-                  )}
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3 border-t border-white/10 px-4 py-3">
+                    <p className="truncate font-sans text-sm font-bold text-white">{badge.label}</p>
+                    <span className="shrink-0 font-sans text-xs text-default">{badge.sub}</span>
+                  </div>
                 </div>
-                <div className="absolute bottom-0 right-0 z-30 p-2">
-                  <p className="font-sans text-sm font-bold text-white 2xl:text-base">
-                    {badge.label}
-                    <strong className="ml-1 text-default">{badge.sub}</strong>
-                  </p>
-                </div>
-              </div>
+              </ScrollReveal>
             )
           })}
         </div>
