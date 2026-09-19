@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { Grid } from './shell/vectors'
 import { SectionHeading } from './fx/SectionTitle'
-import { useTitleRise, useHighlightWipe } from './fx/reveal'
-import ScrollReveal from './effects/ScrollReveal'
 import { badges } from '@/lib/data'
 
 function initials(label) {
@@ -17,20 +15,18 @@ function initials(label) {
 
 export default function CertGrid() {
   const [activeId, setActiveId] = useState(null)
-  useTitleRise('.cert-title', '#badges')
-  useHighlightWipe('.cert-highlight')
 
   return (
     <section id="badges" className="w-full bg-black" onClick={() => setActiveId(null)}>
       <div className="mx-auto max-w-[1400px] px-5 py-24 md:px-10 md:py-32">
-        <SectionHeading accent="Proof" title="Badges" titleClass="cert-title" highlightClass="cert-highlight" />
+        <SectionHeading accent="Proof" title="Badges" />
         <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mt-16 xl:grid-cols-3">
-          {badges.map((badge, i) => {
+          {badges.map((badge) => {
             const isActive = activeId === badge.id
             return (
-              <ScrollReveal key={badge.id} delay={(i % 3) * 0.08}>
-                <div
-                  role="button"
+              <div
+                key={badge.id}
+                role="button"
                   tabIndex={0}
                   aria-expanded={isActive}
                   aria-label={`${badge.label} details`}
@@ -47,7 +43,7 @@ export default function CertGrid() {
                       setActiveId(null)
                     }
                   }}
-                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/12 bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
+                className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/12 bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
                 >
                   <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden">
                     <div className="absolute inset-0" aria-hidden>
@@ -84,7 +80,6 @@ export default function CertGrid() {
                     <span className="shrink-0 font-sans text-xs text-default">{badge.sub}</span>
                   </div>
                 </div>
-              </ScrollReveal>
             )
           })}
         </div>

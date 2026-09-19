@@ -1,13 +1,11 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { motion, motionValue, useAnimationFrame, useSpring, useTransform } from 'motion/react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { motion, useSpring, useTransform } from 'motion/react'
 import { profile } from '@/lib/data'
 import { useDeviceCapability, useReducedMotion } from '@/lib/performance'
 import { attachPointer, pointerX, pointerY } from '@/lib/pointer'
-import { gsap, useGSAP } from '@/lib/gsap'
 import MagneticButton from './effects/MagneticButton'
 import Scene3D from './effects/Scene3D'
 
-const NUM_AUTO_BLOBS = 10
 const HEAD_R = 112
 const BODY1_R = 84
 const BODY2_R = 63
@@ -20,7 +18,6 @@ export default function HeroSection() {
   // as Scene3D. Static h1 covers both cases.
   const gooOn = !reduced && tier !== 'low'
   const sectionRef = useRef(null)
-  const contentRef = useRef(null)
   const maskId = `hero-mask-${useId().replace(/:/g, '')}`
   const filterId = `hero-goo-${useId().replace(/:/g, '')}`
 
@@ -38,10 +35,8 @@ export default function HeroSection() {
 
   const sx = useSpring(pointerX, { stiffness: 120, damping: 22 })
   const sy = useSpring(pointerY, { stiffness: 120, damping: 22 })
-  const baseX = useTransform(sx, [-1, 1], [3, -3])
-  const baseY = useTransform(sy, [-1, 1], [3, -3])
-  const revealX = useTransform(sx, [-1, 1], [6, -6])
-  const revealY = useTransform(sy, [-1, 1], [6, -6])
+  const revealX = useTransform(sx, [-1, 1], [3, -3])
+  const revealY = useTransform(sy, [-1, 1], [3, -3])
 
   const cursorX = useTransform(sx, [-1, 1], [0, size.w])
   const cursorY = useTransform(sy, [-1, 1], [0, size.h])
@@ -52,63 +47,6 @@ export default function HeroSection() {
   const body2X = useSpring(cursorX, { stiffness: 190, damping: 38 })
   const body2Y = useSpring(cursorY, { stiffness: 190, damping: 38 })
 
-  const autoBlobs = useMemo(
-    () =>
-      Array.from({ length: NUM_AUTO_BLOBS }, () => ({
-        x: motionValue(0),
-        y: motionValue(0),
-        phaseX: Math.random() * Math.PI * 2,
-        phaseY: Math.random() * Math.PI * 2,
-        speedX: 0.0005 + Math.random() * 0.0005,
-        speedY: 0.0003 + Math.random() * 0.0005,
-        r: 80 + Math.random() * 50,
-      })),
-    [],
-  )
-
-  // Pauses the goo loop when the hero is offscreen (mirrors Scene3D's IO gate).
-  const visibleRef = useRef(true)
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return undefined
-    const io = new IntersectionObserver(([entry]) => {
-      visibleRef.current = entry.isIntersecting
-    })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-
-  useAnimationFrame((t) => {
-    if (!gooOn || !visibleRef.current) return
-    const el = sectionRef.current
-    if (!el) return
-    // Cached measure from state — no per-frame layout reads.
-    const w = size.w || el.clientWidth
-    const h = size.h || el.clientHeight
-    for (const b of autoBlobs) {
-      b.x.set(((Math.sin(t * b.speedX + b.phaseX) + 1) / 2) * w)
-      b.y.set(((Math.cos(t * b.speedY + b.phaseY) + 1) / 2) * h)
-    }
-  })
-
-  useGSAP(
-    () => {
-      if (reduced) return
-      gsap.to(contentRef.current, {
-        y: -80,
-        autoAlpha: 0.15,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        },
-      })
-    },
-    { scope: sectionRef },
-  )
-
   const words = profile.name.split(' ')
   const nameSize = 'text-[clamp(3rem,11vw,9rem)] uppercase leading-[0.9]'
 
@@ -118,10 +56,6 @@ export default function HeroSection() {
         <div
           className="absolute inset-0"
           style={{ background: 'radial-gradient(60% 40% at 50% 0%, rgba(210,255,0,0.06), transparent 70%)' }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{ background: 'radial-gradient(50% 35% at 50% 45%, rgba(255,255,255,0.05), transparent 70%)' }}
         />
         <Scene3D targetRef={sectionRef} />
         {/* Text-shade: guarantees name/meta contrast whatever pose the 3D object holds. */}
@@ -144,11 +78,6 @@ export default function HeroSection() {
               </filter>
               <mask id={maskId}>
                 <g filter={`url(#${filterId})`}>
-                  {autoBlobs.map((b, i) => (
-                    <motion.g key={i} style={{ x: b.x, y: b.y }}>
-                      <circle r={b.r} fill="white" />
-                    </motion.g>
-                  ))}
                   <motion.g style={{ x: headX, y: headY }}>
                     <circle r={HEAD_R} fill="white" />
                   </motion.g>
@@ -166,48 +95,34 @@ export default function HeroSection() {
       </div>
 
       <div
-        ref={contentRef}
         className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center"
       >
         <div className="grid justify-items-center">
-          {!gooOn ? (
-            <h1 className={`[grid-area:1/1] font-sans font-black text-white ${nameSize}`}>
+          <h1 className={`[grid-area:1/1] font-sans font-black text-white ${nameSize}`}>
+            {words.map((w, i) => (
+              <span key={i} className="block">
+                {w}
+              </span>
+            ))}
+          </h1>
+          {gooOn && (
+            <motion.div
+              aria-hidden="true"
+              style={{
+                x: revealX,
+                y: revealY,
+                mask: `url(#${maskId})`,
+                WebkitMask: `url(#${maskId})`,
+                WebkitTextStroke: '2px #d2ff00',
+              }}
+              className={`[grid-area:1/1] font-bungee text-transparent ${nameSize}`}
+            >
               {words.map((w, i) => (
                 <span key={i} className="block">
                   {w}
                 </span>
               ))}
-            </h1>
-          ) : (
-            <>
-              <motion.h1
-                style={{ x: baseX, y: baseY }}
-                className={`[grid-area:1/1] font-sans font-black text-white ${nameSize}`}
-              >
-                {words.map((w, i) => (
-                  <span key={i} className="block">
-                    {w}
-                  </span>
-                ))}
-              </motion.h1>
-              <motion.div
-                aria-hidden="true"
-                style={{
-                  x: revealX,
-                  y: revealY,
-                  mask: `url(#${maskId})`,
-                  WebkitMask: `url(#${maskId})`,
-                  WebkitTextStroke: '2px #d2ff00',
-                }}
-                className={`[grid-area:1/1] font-bungee text-transparent ${nameSize}`}
-              >
-                {words.map((w, i) => (
-                  <span key={i} className="block">
-                    {w}
-                  </span>
-                ))}
-              </motion.div>
-            </>
+            </motion.div>
           )}
         </div>
 

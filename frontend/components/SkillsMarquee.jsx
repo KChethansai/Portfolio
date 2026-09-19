@@ -1,6 +1,6 @@
 import Marquee from './fx/Marquee'
 import { SectionHeading } from './fx/SectionTitle'
-import { useTitleRise, useHighlightWipe } from './fx/reveal'
+import { useHighlightWipe } from './fx/reveal'
 import { skillGroups } from '@/lib/data'
 
 const skills = skillGroups.flatMap((g) => g.items)
@@ -26,7 +26,6 @@ function SkillItems() {
 }
 
 export default function SkillsMarquee() {
-  useTitleRise('.skills-title', '.skills-title')
   useHighlightWipe('.skills-highlight')
 
   return (
@@ -35,8 +34,6 @@ export default function SkillsMarquee() {
         <SectionHeading
           accent="Stack"
           title="Skills"
-          titleClass="skills-title"
-          highlightClass="skills-highlight"
         />
         <div className="pt-10">
           <div className="relative w-fit overflow-hidden">

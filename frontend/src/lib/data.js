@@ -6,7 +6,7 @@ export const profile = {
     'Computer Science (Data Science) student at Anurag University, Hyderabad with hands-on experience building full-stack MERN applications and ML-powered tools — real-time collaborative systems, a paper trading platform with live market data, and a disease prediction model spanning 150+ conditions, shipping projects from idea to deployment.',
   email: 'kakunurichethansai@gmail.com',
   github: 'https://github.com/KChethansai',
-  linkedin: 'https://www.linkedin.com/in/kakunuri-chethan-sai-130a503b5',
+  linkedin: 'https://linkedin.com/in/kakunuri-chethan-sai-130a503b5',
   resume: '/resume.pdf',
 }
 
@@ -66,7 +66,7 @@ export const experience = [
 ]
 
 export const skillGroups = [
-  { title: 'Frontend', color: '#22d3ee', items: ['React', 'Tailwind CSS', 'Zustand', 'react-beautiful-dnd'] },
+  { title: 'Frontend', color: '#22d3ee', items: ['React', 'Tailwind CSS', 'Zustand', 'dnd-kit'] },
   { title: 'Backend', color: '#8b5cf6', items: ['Node.js', 'Express', 'FastAPI', 'Socket.IO'] },
   {
     title: 'Data',
@@ -88,10 +88,9 @@ export const certifications = [
   { title: 'Introduction to Modern AI', url: 'https://www.credly.com/badges/c34be4d9-95a0-48be-bcf3-583cd959a497/public_url' },
 ]
 
-// Badge/certificate collection — data-driven grid. Each entry optionally pairs
-// a badge face image with a certificate image (paths under /public).
-// `badge` / `certificate` may be null: the grid renders a monogram seal /
-// credential-link fallback instead. Growing the collection is appending entries.
+// Badge/certificate collection — credentials only. Project entries were
+// removed: they duplicated the Projects section and the resume supports no
+// "project badge" concept. Growing the collection is appending entries.
 export const badges = [
   ...certifications.map((c, i) => ({
     id: `cert-${i}`,
@@ -100,13 +99,5 @@ export const badges = [
     badge: null,
     certificate: null,
     url: c.url,
-  })),
-  ...projects.map((p, i) => ({
-    id: `project-${i}`,
-    label: p.title,
-    sub: p.year,
-    badge: null,
-    certificate: null,
-    url: p.github,
   })),
 ]

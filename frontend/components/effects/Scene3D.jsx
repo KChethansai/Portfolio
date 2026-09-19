@@ -48,7 +48,10 @@ function CanvasScene({ targetRef }) {
 
     const applyScale = () => {
       if (!mesh) return
-      mesh.scale.setScalar(Math.min(1, window.innerWidth / 1100) * 0.9)
+      // Small enough to sit behind the name, never over it. Offset right
+      // on wide screens so the centered name owns the composition.
+      mesh.scale.setScalar(Math.min(1, window.innerWidth / 1100) * 0.6)
+      mesh.position.x = window.innerWidth > 768 ? 1.15 : 0
     }
 
     const onResize = () => {
@@ -66,22 +69,23 @@ function CanvasScene({ targetRef }) {
       if (disposed || !renderer || !scene || !camera || !mesh) return
       const t = performance.now()
 
-      mesh.rotation.y += 0.0016
-      mesh.rotation.x = Math.sin(t * 0.0004) * 0.15
-
+      // Studio-object idle: barely-there rotation. The viewer should notice
+      // the object, not the animation.
+      mesh.rotation.y += 0.0006
+      mesh.rotation.x = Math.sin(t * 0.0002) * 0.1
       let progress = 0
       const target = targetRef?.current
       if (target) {
         if (tick++ % 8 === 0 || cachedTop === null) cachedTop = target.getBoundingClientRect().top
         progress = clamp(-cachedTop / window.innerHeight, -0.2, 1)
       }
-      mesh.position.y = 0.15 + progress * 1.2
-      mesh.rotation.z = progress * 0.3
+      mesh.position.y = -0.25 + progress * 0.3
+      mesh.rotation.z = progress * 0.1
 
       px += (pointerX.get() - px) * 0.04
       py += (pointerY.get() - py) * 0.04
-      camera.position.x = px * 0.35
-      camera.position.y = -py * 0.25
+      camera.position.x = px * 0.2
+      camera.position.y = -py * 0.15
       camera.lookAt(0, 0, 0)
 
       renderer.render(scene, camera)
@@ -117,7 +121,7 @@ function CanvasScene({ targetRef }) {
       scene.background = null
 
       camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 100)
-      camera.position.set(0, 0, 4)
+      camera.position.set(0, 0, 5.2)
 
       const pmrem = new THREE.PMREMGenerator(renderer)
       envRT = pmrem.fromScene(new RoomEnvironment(), 0.04)
@@ -139,7 +143,7 @@ function CanvasScene({ targetRef }) {
         roughness: 0.28,
       })
       mesh = new THREE.Mesh(geometry, material)
-      mesh.position.y = 0.15
+      mesh.position.y = -0.35
       scene.add(mesh)
       applyScale()
 

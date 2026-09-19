@@ -1,8 +1,6 @@
 import { useRef } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap'
 import { SectionHeading } from './fx/SectionTitle'
-import { useTitleRise, useHighlightWipe } from './fx/reveal'
-import ScrollReveal from './effects/ScrollReveal'
 import { experience } from '@/lib/data'
 import { useReducedMotion } from '@/lib/performance'
 
@@ -19,8 +17,6 @@ export default function ExperienceSection() {
   const listRef = useRef(null)
   const fillRef = useRef(null)
   const reduced = useReducedMotion()
-  useTitleRise('.experience-title', '.experience-title', 'top 100%')
-  useHighlightWipe('.experience-highlight', 'top 90%', 0.7)
 
   useGSAP(() => {
     if (reduced || !listRef.current || !fillRef.current) return
@@ -47,16 +43,13 @@ export default function ExperienceSection() {
         <SectionHeading
           accent="Work"
           title="Experience"
-          titleClass="experience-title"
-          highlightClass="experience-highlight"
         />
         <div ref={listRef} className="relative mt-12 md:mt-16">
           <div aria-hidden className="pointer-events-none absolute left-0 top-0 bottom-0 w-px bg-white/10">
             {!reduced && <div ref={fillRef} className="h-full w-full bg-default" />}
           </div>
           {experience.slice(0, 2).map((job) => (
-            <ScrollReveal
-              as="article"
+            <article
               key={job.company}
               className="relative pl-8 md:pl-12 pb-16 md:pb-20 last:pb-0"
             >
@@ -74,7 +67,7 @@ export default function ExperienceSection() {
               <p className="mt-5 max-w-3xl text-base md:text-lg leading-relaxed text-white/70">
                 {job.summary}
               </p>
-            </ScrollReveal>
+            </article>
           ))}
         </div>
       </div>

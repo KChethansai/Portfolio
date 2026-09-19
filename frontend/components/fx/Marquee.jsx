@@ -16,7 +16,7 @@ export default function Marquee({ children, className = '', rowClassName = '' })
     const marquee = marqueeRef.current
     const content = contentRef.current
     let direction = 1
-    const speed = 0.4
+    const speed = 0.22
     let x = 0
     let contentWidth = content.offsetWidth
     const measure = () => {

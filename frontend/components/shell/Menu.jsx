@@ -41,58 +41,9 @@ export default function Menu({ open, onClose }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  useGSAP(
-    () => {
-      if (reduced) return
-      const menu = rootRef.current
-      if (!menu) return
-      const leftGallery = menu.querySelector('.menu-left-gallery')
-      const rightGallery = menu.querySelector('.menu-right-gallery')
-      if (!menu || !leftGallery || !rightGallery) return
-      const moveAmount = 100
-      const clampRange = 1
-      const duration = 1.2
-      const ease = 'power2.out'
-      const clamp = (v, min, max) => Math.min(Math.max(v, min), max)
-      const handleMouseMove = (e) => {
-        const rect = menu.getBoundingClientRect()
-        const mouseY = e.clientY - rect.top
-        const normalizedY = ((mouseY / rect.height - 0.5) * 2)
-        const clampedY = clamp(normalizedY, -clampRange, clampRange)
-        gsap.to(leftGallery, { y: -clampedY * moveAmount, duration, ease, overwrite: 'auto' })
-        gsap.to(rightGallery, { y: clampedY * moveAmount, duration, ease, overwrite: 'auto' })
-      }
-      const handleMouseLeave = () => {
-        gsap.to([leftGallery, rightGallery], { y: 0, duration: 0.8, ease: 'power3.out' })
-      }
-      menu.addEventListener('mousemove', handleMouseMove)
-      menu.addEventListener('mouseleave', handleMouseLeave)
-      return () => {
-        menu.removeEventListener('mousemove', handleMouseMove)
-        menu.removeEventListener('mouseleave', handleMouseLeave)
-      }
-    },
-    { scope: rootRef },
-  )
-
-  useGSAP(
-    () => {
-      if (!open || reduced) return
-      const menuBgs = gsap.utils.toArray('.menu-item .menu-bg', rootRef.current)
-      const tl = gsap.timeline()
-      menuBgs.forEach((bg, index) => {
-        tl.fromTo(
-          bg,
-          { xPercent: -100 },
-          { xPercent: 100, duration: 0.8, ease: 'power2.out', delay: index * 0.05 },
-          0,
-        )
-      })
-      tl.to(menuBgs, { xPercent: -100, duration: 0.8, ease: 'power2.in', delay: 0.5 })
-    },
-    { dependencies: [open], scope: rootRef },
-  )
-
+  // Menu link + social rollovers are micro-motion: kept. Gallery
+  // parallax and open-transition wipes were removed — the panel opens
+  // on a CSS transition and stays still.
   useGSAP(
     () => {
       if (reduced) return
@@ -113,24 +64,6 @@ export default function Menu({ open, onClose }) {
       return () => cleanups.forEach((fn) => fn())
     },
     { scope: rootRef },
-  )
-
-  useGSAP(
-    () => {
-      if (!open || reduced) return
-      const socialBgs = gsap.utils.toArray('.social-bg', rootRef.current)
-      const tl = gsap.timeline()
-      socialBgs.forEach((bg, index) => {
-        tl.fromTo(
-          bg,
-          { xPercent: -100 },
-          { xPercent: 100, duration: 0.8, ease: 'power2.out', delay: index * 0.1 },
-          0,
-        )
-      })
-      tl.to(socialBgs, { xPercent: -100, duration: 0.3, ease: 'power2.in', delay: 0.5 })
-    },
-    { dependencies: [open], scope: rootRef },
   )
 
   useGSAP(
@@ -181,30 +114,8 @@ export default function Menu({ open, onClose }) {
         <div className="md:hidden absolute top-0 left-0 w-full h-full opacity-15">
           <Hatch stroke="#fff" />
         </div>
-        <div className="absolute w-full h-full flex items-center z-50">
-          <div className="hidden lg:flex gap-17 lg:gap-0 xl:gap-18 w-1/2" aria-hidden="true">
-            <div className="menu-left-gallery flex flex-col gap-17 lg:gap-0 xl:gap-18 translate-y-40">
-              <div className="overflow-hidden border border-white/25 px-10 py-12">
-                <span className="block font-bungee text-7xl xl:text-8xl leading-none text-white">
-                  BUILD
-                </span>
-              </div>
-              <div className="overflow-hidden bg-default px-10 py-12">
-                <span className="block font-bungee text-7xl xl:text-8xl leading-none text-black">
-                  SHIP
-                </span>
-              </div>
-            </div>
-            <div className="menu-right-gallery flex flex-col gap-17 lg:gap-0 xl:gap-18 -translate-y-25">
-              <div className="overflow-hidden border border-white/25 px-10 py-12">
-                <span className="block font-bungee text-7xl xl:text-8xl leading-none text-white">
-                  LEARN
-                </span>
-              </div>
-              <div className="overflow-hidden bg-default px-10 py-24" />
-            </div>
-          </div>
-          <div className="lg:pt-50 lg:pb-8 flex flex-col justify-center xl:justify-between items-center w-full lg:w-1/2 h-full">
+        <div className="absolute w-full h-full flex items-center justify-center z-50">
+          <div className="lg:pt-50 lg:pb-8 flex flex-col justify-center xl:justify-between items-center w-full h-full">
             <nav aria-label="Menu">
               <ul className="flex flex-col justify-center items-center">
                 {LINKS.map((item) => (
@@ -224,10 +135,6 @@ export default function Menu({ open, onClose }) {
                       >
                         {item.label}
                       </span>
-                      <span
-                        className="menu-bg absolute left-0 top-0 w-full h-full bg-default -translate-x-full z-0"
-                        aria-hidden="true"
-                      />
                     </a>
                   </li>
                 ))}
@@ -254,10 +161,6 @@ export default function Menu({ open, onClose }) {
                       >
                         {social.label}
                       </span>
-                      <span
-                        className="social-bg absolute left-0 top-0 w-full h-full bg-default -translate-x-full z-0"
-                        aria-hidden="true"
-                      />
                     </a>
                   </li>
                 ))}

@@ -1,10 +1,9 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap');
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Brier";
-  src: url("/fonts/brier-bold.otf");
-}
+/* Brier @font-face removed — verified unused (no font-brier class anywhere).
+   Type system is Mona Sans (sans) + Bungee (display) only. Font asset left
+   in place; re-add the declaration if Brier ever earns a role. */
 
 @font-face {
   font-family: "Bungee";
@@ -21,7 +20,6 @@
   --color-default: #d2ff00;
   --color-musgo: #282C20;
   --font-sans: "Mona Sans", sans-serif;
-  --font-brier: "Brier", sans-serif;
   --font-bungee: "Bungee", sans-serif;
 }
 

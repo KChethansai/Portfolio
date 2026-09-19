@@ -1,10 +1,10 @@
-// Subtle magnetic anchor. Pulls toward the cursor at 0.25 strength while
+// Subtle magnetic anchor. Pulls toward the cursor at 0.15 strength while
 // hovered, springs back on leave. Local listeners only (no global cost).
 import { useRef } from 'react'
 import { motion, useSpring, useMotionValue } from 'motion/react'
 import { useReducedMotion } from '@/lib/performance'
 
-const STRENGTH = 0.25
+const STRENGTH = 0.15
 
 export default function MagneticButton({ href, className = '', children, ...rest }) {
   const ref = useRef(null)
